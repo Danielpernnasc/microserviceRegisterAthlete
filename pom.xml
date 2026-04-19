@@ -28,10 +28,10 @@
 	</scm>
 	<properties>
 		<java.version>21</java.version>
-		 <sonar.projectKey>register-athlete</sonar.projectKey>
-		<sonar.projectName>Register Athlete</sonar.projectName>
-		<sonar.host.url>http://localhost:9000</sonar.host.url>
-	
+		 <sonar.projectKey>Danielpernnasc_microsserviceRegisterAthlete</sonar.projectKey>
+		<sonar.organization>danielpernnasc</sonar.organization>
+		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
+		
 	</properties>
 
 	<dependencies>
