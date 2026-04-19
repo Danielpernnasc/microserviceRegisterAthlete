@@ -33,7 +33,7 @@ jobs:
 
       - name: SonarQube
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.BODYBUILDERREGISTER }}
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
         run: ./mvnw sonar:sonar
