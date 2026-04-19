@@ -36,8 +36,9 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
+
         run: ./mvnw sonar:sonar
-          -Dsonar.projectKey=microsserviceRegisterAthlete
-          -Dsonar.organization=danielpernnasc
-          -Dsonar.host.url=https://sonarcloud.io
-          -Dsonar.token=${{ secrets.SONAR_TOKEN }}
+            -Dsonar.projectKey=danielpernnasc_microsserviceRegisterAthlete
+            -Dsonar.organization=danielpernnasc
+            -Dsonar.host.url=https://sonarcloud.io
+            -Dsonar.token=${{ secrets.SONAR_TOKEN }}
