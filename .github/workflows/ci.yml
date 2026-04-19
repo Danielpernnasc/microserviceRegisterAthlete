@@ -31,7 +31,7 @@ jobs:
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
         run: ./mvnw clean verify
 
-       - name: SonarQube
+      - name: SonarQube
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
