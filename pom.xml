@@ -28,10 +28,6 @@
 	</scm>
 	<properties>
 		<java.version>21</java.version>
-		 <sonar.projectKey>Danielpernnasc_microsserviceRegisterAthlete</sonar.projectKey>
-		<sonar.organization>danielpernnasc</sonar.organization>
-		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
-		
 	</properties>
 
 	<dependencies>
