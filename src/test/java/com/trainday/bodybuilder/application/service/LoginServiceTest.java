@@ -6,21 +6,19 @@ import static org.mockito.Mockito.*;
 
 import java.util.Optional;
 
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.AuthenticationManager;
-
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.trainday.bodybuilder.api.DTO.request.LoginRequest;
 import com.trainday.bodybuilder.api.DTO.response.LoginResponse;
+import com.trainday.bodybuilder.domain.model.Athlete;
 import com.trainday.bodybuilder.domain.model.Login;
+import com.trainday.bodybuilder.domain.repository.AthleteRepository;
 import com.trainday.bodybuilder.domain.repository.LoginRepository;
 import com.trainday.bodybuilder.infra.security.JwtService;
 
@@ -29,6 +27,9 @@ public class LoginServiceTest {
 
     @Mock
     LoginRepository loginrepository;
+
+    @Mock
+    AthleteRepository athleterepository;
 
     @Mock
     JwtService jwtservice;
@@ -70,39 +71,35 @@ public class LoginServiceTest {
 
     }
 
-    @Test
-    void shoudauthenticate(){
-          LoginRequest request = new LoginRequest(
-            "id-user",
-            "dpericles6@gmail.com",
-            "123456"
+  @Test
+    void shoudauthenticate() {
+
+        Login user = new Login();
+        user.setId("user123");
+        user.setEmail("teste@gmail.com");
+        user.setPassword("123");
+
+        Athlete athlete = new Athlete();
+        athlete.setId("athlete123");
+        athlete.setUserId("user123");
+
+        when(loginrepository.findByEmail("teste@gmail.com"))
+            .thenReturn(Optional.of(user));
+
+        when(athleterepository.findByUserId("user123"))
+            .thenReturn(Optional.of(athlete));
+
+        when(jwtservice.generateToken(
+                "teste@gmail.com",
+                "user123",
+                "athlete123"))
+            .thenReturn("token_fake");
+
+        String token = loginservice.authenticate(
+            new LoginRequest(null, "teste@gmail.com", "123")
         );
 
-       org.springframework.security.core.Authentication authentication =
-            mock(org.springframework.security.core.Authentication.class);
-
-         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
-             .thenReturn(authentication);
-
-        when(jwtservice.generateToken("dpericles6@gmail.com"))
-            .thenReturn("token-fake");  
-            
-        String token = loginservice.authenticate(request);
-
-        assertNotNull(token);
-        assertEquals("token-fake", token);
-
-        verify(authenticationManager).authenticate(argThat(auth ->
-            auth.getPrincipal().equals("dpericles6@gmail.com") &&
-            auth.getCredentials().equals("123456")
-        ));
-
-        verify(jwtservice).generateToken("dpericles6@gmail.com");
-    }
-
-
-    
-
-
+        assertEquals("token_fake", token);
+}
 
 }

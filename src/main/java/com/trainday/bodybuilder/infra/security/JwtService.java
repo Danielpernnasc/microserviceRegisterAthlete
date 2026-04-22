@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class JwtService{
@@ -16,7 +18,7 @@ public class JwtService{
     private String secret;
 
     @Value("${jwt.expiration}")
-    private Long experation;
+    private Long expiration;
 
 
     private Key getKey(){
@@ -28,11 +30,22 @@ public class JwtService{
         return getKey();
     }
 
-    public String generateToken(String id){
+    public String generateToken(
+            String email,
+            String userId,
+            String athleteId) {
+
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("userId", userId);
+        claims.put("athleteId", athleteId);
+
         return Jwts.builder()
-                .setSubject(id)
+                .setClaims(claims)
+                .setSubject(email)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + experation))
+                .setExpiration(
+                    new Date(System.currentTimeMillis() + expiration)
+                )
                 .signWith(getKey(), SignatureAlgorithm.HS256)
                 .compact();
     }

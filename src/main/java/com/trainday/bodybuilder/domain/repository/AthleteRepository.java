@@ -12,11 +12,14 @@ import com.trainday.bodybuilder.domain.model.Athlete;
 @Repository
 public interface AthleteRepository extends MongoRepository<Athlete, String> {
 
-    Athlete save(Optional<Athlete> existAthlete);
+
+
+
+    Optional<Athlete> findByUserId(String userId);
+
+    Optional<Athlete> findByEmail(String email);
 
     Optional<Athlete> findByIdAndEmail(String id, String email);
-
-    void deleteById(Athlete athlete);
 
 
 }

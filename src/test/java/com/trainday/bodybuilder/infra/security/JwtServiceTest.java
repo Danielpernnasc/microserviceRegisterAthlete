@@ -20,14 +20,14 @@ public class JwtServiceTest {
         jwtService = new JwtService();
 
         ReflectionTestUtils.setField(jwtService, "secret", "chave-falsa-so-para-teste-unitario-2026");
-        ReflectionTestUtils.setField(jwtService, "experation", 3600000L);
+        ReflectionTestUtils.setField(jwtService, "expiration", 3600000L);
         }
     
 
     @Test
     void shouldGenerateToken(){
 
-         String token = jwtService.generateToken("usuary-123");
+         String token = jwtService.generateToken("usuary-123", "user1", "athlete1");
 
          assertNotNull(token);
          assertFalse(token.isBlank());
@@ -38,7 +38,7 @@ public class JwtServiceTest {
     void shouldContentCorret(){
         String idWait = "usuary-123";
 
-        String token = jwtService.generateToken(idWait);
+        String token = jwtService.generateToken(idWait, "user1", "athlete1");
 
 
         Claims claims = Jwts.parserBuilder()
@@ -52,7 +52,7 @@ public class JwtServiceTest {
 
     @Test
     void shouldExpiredInFuture(){
-        String token = jwtService.generateToken("usuary-123");
+        String token = jwtService.generateToken("usuary-123", "user1", "athlete1");
 
         Claims claims = Jwts.parserBuilder()
                     .setSigningKey(jwtService.testgetKey())
@@ -67,7 +67,7 @@ public class JwtServiceTest {
 
     @Test
     void shouldGererTokenValid(){
-        String token = jwtService.generateToken("usuary-123");
+        String token = jwtService.generateToken("usuary-123", "user1", "athlete1");
 
 
         assertDoesNotThrow(() -> 
@@ -81,7 +81,7 @@ public class JwtServiceTest {
     void shoudextractEmail(){
 
         String emailWait = "daniel@host.com";
-        String token = jwtService.generateToken(emailWait);
+        String token = jwtService.generateToken(emailWait, "user1", "athlete1");
         String emailExtraido = jwtService.extractEmail(token);
         assertEquals(emailWait, emailExtraido);
     }
@@ -95,7 +95,7 @@ public class JwtServiceTest {
 
     @Test
     void shouldTokenValid(){
-        String token = jwtService.generateToken("daniel@host.com");
+        String token = jwtService.generateToken("daniel@host.com", "user1", "athlete1");
 
         boolean result = jwtService.isTokenValid(token);
 
@@ -113,8 +113,8 @@ public class JwtServiceTest {
 
     @Test
     void shouldReturnFalseToTokenExpired(){
-        ReflectionTestUtils.setField(jwtService, "experation", -1L);
-        String token = jwtService.generateToken("daniel@host.com");
+        ReflectionTestUtils.setField(jwtService, "expiration", -1L);
+        String token = jwtService.generateToken("daniel@host.com", "user1", "athlete1");
 
         boolean result = jwtService.isTokenValid(token);
 
@@ -124,7 +124,7 @@ public class JwtServiceTest {
     @Test
     void shoulExtractUserName(){
         String userNameWait = "daniel@host.com";
-        String token = jwtService.generateToken(userNameWait);
+        String token = jwtService.generateToken(userNameWait, "user1", "athlete1");
         String userNameExtracted = jwtService.extractUsername(token);
         assertEquals(userNameWait, userNameExtracted);
     }
