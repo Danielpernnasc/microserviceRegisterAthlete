@@ -101,7 +101,7 @@ public class AthleteServiceTest {
     void shouldUpdateAthlete(){
         Athlete existAthlete = new Athlete();
 
-        existAthlete.setCPF("29104828801");
+        existAthlete.setCPF("999.999.999-99");
         existAthlete.setName("Daniel Péricles do Nascimento");
         existAthlete.setAge(45L);
         existAthlete.setEmail("dpericles6@gmail.com");
@@ -110,7 +110,7 @@ public class AthleteServiceTest {
         existAthlete.setpercentageFat(15L);
 
         Athlete updateAthlete = new Athlete();
-        updateAthlete.setCPF("29104828801");
+        updateAthlete.setCPF("999.999.999-99");
         updateAthlete.setName("Daniel Péricles do Nascimento");
         updateAthlete.setAge(44L);
         updateAthlete.setEmail("dpericles6@hotmail.com");
@@ -148,7 +148,7 @@ public class AthleteServiceTest {
 
         Athlete existAthlete = new Athlete();
         existAthlete.setId("1");
-        existAthlete.setCPF("29104828801");
+        existAthlete.setCPF("999.999.999-99");
         existAthlete.setName("Daniel Péricles do Nascimento");
         existAthlete.setAge(45L);
         existAthlete.setEmail("dpericles6@gmail.com");

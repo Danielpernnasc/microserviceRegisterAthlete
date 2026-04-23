@@ -1,6 +1,7 @@
 package com.trainday.bodybuilder.infra.security;
 
-import java.util.List;
+
+
 
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,9 +24,15 @@ public class LoginUserDetailsService implements UserDetailsService {
  @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         Login login = loginRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado: " + email));
+                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado: "));
+        
 
-        return new User(login.getEmail(), login.getPassword(), List.of());
+        return User
+                .builder()
+                .username(login.getEmail())
+                .password(login.getPassword())
+                .authorities("USER")
+                .build();
     }
 
 

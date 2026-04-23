@@ -13,7 +13,7 @@ public class AthleteTest {
     void shouldTestCreateAthlete() {
         Athlete athlete = new Athlete(
             "1",
-            "29104828801",
+            "999.999.999-99",
             "Daniel Péricles do Nascimento",
             "dpericles6@gmail.com",
             45L,
@@ -24,7 +24,7 @@ public class AthleteTest {
         );
 
         assertEquals("1", athlete.getId());
-        assertEquals("29104828801", athlete.getCPF());
+        assertEquals("999.999.999-99", athlete.getCPF());
         assertEquals("Daniel Péricles do Nascimento", athlete.getName());
         assertEquals("dpericles6@gmail.com", athlete.getEmail());
         assertEquals(45L, athlete.getAge());
