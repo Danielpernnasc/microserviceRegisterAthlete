@@ -2,6 +2,7 @@ package com.trainday.bodybuilder.infra.security;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+///import jakarta.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,11 @@ import java.util.Map;
 
 @Service
 public class JwtService{
+
+    // @PostConstruct
+    // public void init() {
+    //     System.out.println("JWT SECRET 8080 = [" + secret + "]");
+    // }
 
     @Value("${jwt.secret}")
     private String secret;
