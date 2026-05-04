@@ -8,14 +8,12 @@ public class Login {
 
     @Id
     private String id;
-
-
     private String email; // usar o email da variavel que vem do Athlete
     private String password;
 
     public Login(){}
 
-    public Login(String id, String email, String password){
+    public Login(String email, String password){
         this.id = id;
         this.email = email;
         this.password = password;

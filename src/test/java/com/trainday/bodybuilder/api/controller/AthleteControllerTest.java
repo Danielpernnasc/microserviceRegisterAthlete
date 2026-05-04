@@ -14,6 +14,8 @@ import com.trainday.bodybuilder.api.DTO.request.AthleteRequest;
 import com.trainday.bodybuilder.api.DTO.response.AthleteResponse;
 import com.trainday.bodybuilder.application.service.AthleteService;
 import com.trainday.bodybuilder.domain.model.Athlete;
+import com.trainday.bodybuilder.domain.model.enums.Gender;
+import com.trainday.bodybuilder.domain.model.enums.GenderIdentity;
 
 @ExtendWith(MockitoExtension.class)
 public class AthleteControllerTest {
@@ -31,6 +33,8 @@ public class AthleteControllerTest {
             "Daniel Péricles do Nascimento",
             "dpericles6@gmail.com",
             45L,
+            Gender.Male,
+            GenderIdentity.CISGENDER,
             182.5,
             105.5,
             18L
@@ -41,6 +45,8 @@ public class AthleteControllerTest {
         athlete.setName("Daniel Péricles do Nascimento");
         athlete.setEmail("dpericles6@gmail.com");
         athlete.setAge(45L);
+        athlete.setGender(Gender.Male);
+        athlete.setIdentity(GenderIdentity.CISGENDER);
         athlete.setHeight(182.5);
         athlete.setWeight(105.5);
         athlete.setpercentageFat(18L);
@@ -54,6 +60,8 @@ public class AthleteControllerTest {
         assertEquals(athleteReq.name(), created.getName());
         assertEquals(athleteReq.email(), created.getEmail());
         assertEquals(athleteReq.age(), created.getAge());
+        assertEquals(athleteReq.gender(), created.getGender());
+        assertEquals(athleteReq.identity(), created.getIdentity());
         assertEquals(athleteReq.height(), created.getHeight());
         assertEquals(athleteReq.weight(), created.getWeight());
         assertEquals(athleteReq.percentagefat(), created.getpercentageFat());
@@ -69,6 +77,8 @@ public class AthleteControllerTest {
             "Daniel Péricles do Nascimento",
             "dpericles6@gmail.com",
             45L,
+            Gender.Male,
+            GenderIdentity.CISGENDER,
             182.5,
             105.5,
             18L
@@ -85,6 +95,8 @@ public class AthleteControllerTest {
             assertEquals("Daniel Péricles do Nascimento", result.name());
             assertEquals("dpericles6@gmail.com", result.email());
             assertEquals(45L, result.age());
+            assertEquals(Gender.Male, result.gender());
+            assertEquals(GenderIdentity.CISGENDER, result.identity());
             assertEquals(182.5, result.height());
             assertEquals(105.5, result.weight());
             assertEquals(18L, result.percentagefat());
@@ -99,6 +111,8 @@ public class AthleteControllerTest {
             "Daniel Péricles do Nascimento",
             "dpericles6@gmail.com",
             45L,
+            Gender.Male,
+            GenderIdentity.CISGENDER,
             182.5,
             105.5,
             18L
@@ -109,6 +123,8 @@ public class AthleteControllerTest {
         athlete.setName("Daniel Péricles do Nascimento");
         athlete.setEmail("dpericles6@gmail.com");
         athlete.setAge(45L);
+         athlete.setGender(Gender.Male);
+         athlete.setIdentity(GenderIdentity.CISGENDER);
         athlete.setHeight(182.5);
         athlete.setWeight(105.5);
         athlete.setpercentageFat(18L);
@@ -123,6 +139,8 @@ public class AthleteControllerTest {
         assertEquals("Daniel Péricles do Nascimento", athleteReq.name());
         assertEquals("dpericles6@gmail.com", athleteReq.email());
         assertEquals(45L, athleteReq.age());
+        assertEquals(Gender.Male, athleteReq.gender());
+        assertEquals(GenderIdentity.CISGENDER, athleteReq.identity());
         assertEquals(182.5, athleteReq.height());
         assertEquals(105.5, athleteReq.weight());
         assertEquals(18L, athleteReq.percentagefat());
@@ -138,6 +156,8 @@ public class AthleteControllerTest {
             existAthlete.setCPF("999.999.999-99");
             existAthlete.setName("Daniel Péricles do Nascimento");
             existAthlete.setAge(45L);
+            existAthlete.setGender(Gender.Male);
+            existAthlete.setIdentity(GenderIdentity.CISGENDER);
             existAthlete.setEmail("dpericles6@gmail.com");
             existAthlete.setHeight(181.90);
             existAthlete.setWeight(105.10);

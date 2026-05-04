@@ -1,6 +1,8 @@
 package com.trainday.bodybuilder.infra.security;
 
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -69,6 +71,15 @@ public class SecurityConfigTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"email\":\"user@test.com\",\"password\":\"123456\"}"))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    void apiDocsNaoDeveRetornarForbidden() throws Exception {
+        mockMvc.perform(get("/v3/api-docs"))
+                .andExpect(result -> assertNotEquals(
+                    403,
+                    result.getResponse().getStatus()
+                ));
     }
 
     @TestConfiguration

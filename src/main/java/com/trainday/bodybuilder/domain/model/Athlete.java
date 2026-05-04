@@ -1,8 +1,12 @@
 package com.trainday.bodybuilder.domain.model;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
+
+import com.trainday.bodybuilder.domain.model.enums.Gender;
+import com.trainday.bodybuilder.domain.model.enums.GenderIdentity;
 
 
 
@@ -11,10 +15,13 @@ public class Athlete {
 
     @Id
     private String id;
+    @Indexed(unique = true)
     private String cpf;
     private String name;
     private String email;
     private Long age;
+    private Gender gender;
+    private GenderIdentity identity;
     private Double height;
     private Double weight;
     @Field("percentagefat")
@@ -24,13 +31,15 @@ public class Athlete {
     public Athlete(){}
 
     public Athlete(
-        String id, String cpf, String name, String email, Long age, Double height, Double weight, Long percentagefat, String userId
+        String id, String cpf, String name, String email, Long age, Gender gender, GenderIdentity identity, Double height, Double weight, Long percentagefat, String userId
     ){
         this.id = id;
         this.cpf = cpf;
         this.name = name;
         this.email = email;
         this.age = age;
+        this.gender = gender;
+        this.identity = identity;
         this.height = height;
         this.weight = weight;
         this.percentagefat = percentagefat;
@@ -69,13 +78,30 @@ public class Athlete {
         this.email = email;
     }
 
-      public Long getAge() {
+    public Long getAge() {
         return age;
     }
 
     public void setAge(long age) {
         this.age = age;
     }
+
+    public Gender getGender(){
+        return gender;
+    }
+
+    public void setGender(Gender gender){
+        this.gender = gender;
+    }
+
+    public GenderIdentity getIdentity(){
+        return identity;
+    }
+
+    public void setIdentity(GenderIdentity identity){
+        this.identity = identity;
+    }
+
 
     public Double getHeight() {
         return height;

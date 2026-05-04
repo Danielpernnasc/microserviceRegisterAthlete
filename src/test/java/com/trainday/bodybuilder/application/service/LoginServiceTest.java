@@ -47,7 +47,6 @@ public class LoginServiceTest {
     @Test
     void shouldCreateLogin(){
         LoginRequest request = new LoginRequest(
-            "id-user",
             "dpericles6@gmail.com",
             "123456"
         );
@@ -96,7 +95,7 @@ public class LoginServiceTest {
             .thenReturn("token_fake");
 
         String token = loginservice.authenticate(
-            new LoginRequest(null, "teste@gmail.com", "123")
+            new LoginRequest( "teste@gmail.com", "123")
         );
 
         assertEquals("token_fake", token);

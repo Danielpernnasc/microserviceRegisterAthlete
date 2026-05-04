@@ -11,13 +11,11 @@ public class LoginTest {
     @Test
     void shouldCreateLogin(){
         Login login = new Login(
-
-            "1",
             "dpericles6@gmail.com",
             "123456"
         );
 
-        assertEquals("1", login.getId());
+        assertEquals(null, login.getId());
         assertEquals("dpericles6@gmail.com", login.getEmail());
         assertEquals("123456", login.getPassword());
     }
