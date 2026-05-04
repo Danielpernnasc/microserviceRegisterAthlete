@@ -16,6 +16,8 @@ import com.trainday.bodybuilder.api.DTO.request.AthleteRequest;
 import com.trainday.bodybuilder.api.DTO.response.AthleteResponse;
 import com.trainday.bodybuilder.domain.model.Athlete;
 import com.trainday.bodybuilder.domain.model.Login;
+import com.trainday.bodybuilder.domain.model.enums.Gender;
+import com.trainday.bodybuilder.domain.model.enums.GenderIdentity;
 import com.trainday.bodybuilder.domain.repository.AthleteRepository;
 import com.trainday.bodybuilder.domain.repository.LoginRepository;
 
@@ -39,6 +41,8 @@ public class AthleteServiceTest {
             "Maria Silva",
             "maria@email.com",
             25L,
+            Gender.Female,
+            GenderIdentity.CISGENDER,
             1.68,
             62.0,
             18L
@@ -66,6 +70,40 @@ public class AthleteServiceTest {
     }
 
     @Test
+    void shouldThrowConflictWhenCpfAlreadyExists(){
+        AthleteRequest request = new AthleteRequest(
+            "12345678900",
+            "Maria Silva",
+            "maria@email.com",
+            25L,
+            Gender.Female,
+            GenderIdentity.CISGENDER,
+            1.68,
+            62.0,
+            18L
+        );
+        Login login = new Login();
+        login.setId("user-1");
+        login.setEmail(request.email());
+        Athlete existingAthlete = new Athlete();
+        existingAthlete.setId("athlete-1");
+        existingAthlete.setCPF(request.cpf());
+
+        when(loginrepository.findByEmail(request.email()))
+            .thenReturn(Optional.of(login));
+        when(athleterepository.findByCpf(request.cpf()))
+            .thenReturn(Optional.of(existingAthlete));
+
+        AthleteCpfAlreadyExistsException exception = assertThrows(
+            AthleteCpfAlreadyExistsException.class,
+            () -> athleteservice.createAthlete(request)
+        );
+
+        assertEquals("CPF already exists: " + request.cpf(), exception.getMessage());
+        verify(athleterepository, never()).save(any(Athlete.class));
+    }
+
+    @Test
     void shouldgetAthleteById(){
           Athlete athlete = new Athlete(
             "1",
@@ -73,6 +111,8 @@ public class AthleteServiceTest {
             "Maria Silva",
             "maria@email.com",
             25L,
+            Gender.Female,
+            GenderIdentity.CISGENDER,
             1.68,
             62.0,
             18L,
@@ -91,6 +131,8 @@ public class AthleteServiceTest {
         assertEquals(athlete.getName(), state.name());
         assertEquals(athlete.getEmail(), state.email());
         assertEquals(athlete.getAge(), state.age());
+        assertEquals(athlete.getGender(), state.gender());
+        assertEquals(athlete.getIdentity(), state.identity());
         assertEquals(athlete.getHeight(), state.height());
         assertEquals(athlete.getWeight(), state.weight());
         assertEquals(athlete.getpercentageFat(), state.percentagefat());
@@ -105,6 +147,8 @@ public class AthleteServiceTest {
         existAthlete.setName("Daniel Péricles do Nascimento");
         existAthlete.setAge(45L);
         existAthlete.setEmail("dpericles6@gmail.com");
+        existAthlete.setGender((Gender.Female));
+        existAthlete.setIdentity(GenderIdentity.CISGENDER);
         existAthlete.setHeight(181.90);
         existAthlete.setWeight(105.10);
         existAthlete.setpercentageFat(15L);
@@ -113,6 +157,8 @@ public class AthleteServiceTest {
         updateAthlete.setCPF("999.999.999-99");
         updateAthlete.setName("Daniel Péricles do Nascimento");
         updateAthlete.setAge(44L);
+        existAthlete.setGender((Gender.Male));
+        existAthlete.setIdentity(GenderIdentity.CISGENDER);
         updateAthlete.setEmail("dpericles6@hotmail.com");
         updateAthlete.setHeight(182.0);
         updateAthlete.setWeight(104.90);
@@ -129,6 +175,8 @@ public class AthleteServiceTest {
              null,    
             "Daniel Péricles do Nascimento",
             null,
+            Gender.Male,
+            GenderIdentity.CISGENDER,
             null,
             103.5,
             null
@@ -151,6 +199,8 @@ public class AthleteServiceTest {
         existAthlete.setCPF("999.999.999-99");
         existAthlete.setName("Daniel Péricles do Nascimento");
         existAthlete.setAge(45L);
+        existAthlete.setGender(Gender.Male);
+        existAthlete.setIdentity(GenderIdentity.CISGENDER);
         existAthlete.setEmail("dpericles6@gmail.com");
         existAthlete.setHeight(181.90);
         existAthlete.setWeight(105.10);
