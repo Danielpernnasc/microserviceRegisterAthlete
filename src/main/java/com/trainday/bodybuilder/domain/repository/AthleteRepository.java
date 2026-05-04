@@ -19,7 +19,7 @@ public interface AthleteRepository extends MongoRepository<Athlete, String> {
 
     Optional<Athlete> findByEmail(String email);
 
-    //Optional<Athlete> findByCpf(String cpf);
+    Optional<Athlete> findByCpf(String cpf);
 
     Optional<Athlete> findByIdAndEmail(String id, String email);
 
