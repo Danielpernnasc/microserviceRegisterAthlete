@@ -6,6 +6,7 @@ import java.util.Optional;
 // import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
+import com.mongodb.DuplicateKeyException;
 import com.trainday.bodybuilder.api.DTO.request.AthleteRequest;
 import com.trainday.bodybuilder.api.DTO.response.AthleteResponse;
 import com.trainday.bodybuilder.domain.model.Athlete;
@@ -36,7 +37,7 @@ public class AthleteService {
         Login user = loginRepository.findByEmail(reqAthlete.email())
                .orElseThrow(() -> new RuntimeException("User not found: " + reqAthlete.email()));
 
-        // validateCpfAvailable(reqAthlete.cpf(), null);
+        validateCpfAvailable(reqAthlete.cpf(), null);
          
         Athlete athlete = new Athlete();
         athlete.setCPF(reqAthlete.cpf());
@@ -50,11 +51,11 @@ public class AthleteService {
         athlete.setpercentageFat(reqAthlete.percentagefat());
         athlete.setUserId(user.getId());
 
-        return athleterepository.save(athlete);
-        // try {
-        // } catch (DuplicateKeyException e) {
-        //     throw new AthleteCpfAlreadyExistsException(reqAthlete.cpf());
-        // }
+        try {
+            return athleterepository.save(athlete);
+        } catch (DuplicateKeyException e) {
+            throw new AthleteCpfAlreadyExistsException(reqAthlete.cpf());
+        }
   
     }
     public AthleteResponse getAthleteById(String id) {
@@ -80,11 +81,11 @@ public class AthleteService {
         .orElseThrow(() -> new RuntimeException(ATHLETE_NOT_FOUND));
 
             Optional.ofNullable(updateAthlete.cpf())
-                // .ifPresent(cpf -> {
-                //     validateCpfAvailable(cpf, id);
-                //     existAthlete.setCPF(cpf);
-                // });
-                .ifPresent(existAthlete::setCPF);
+                .ifPresent(cpf -> {
+                    validateCpfAvailable(cpf, id);
+                    existAthlete.setCPF(cpf);
+                });
+                // .ifPresent(existAthlete::setCPF);
             Optional.ofNullable(updateAthlete.name())
                 .ifPresent(existAthlete::setName);
                 
@@ -110,11 +111,11 @@ public class AthleteService {
                 .ifPresent(existAthlete::setpercentageFat);
 
                 
-                return athleterepository.save(existAthlete);
-                // try {
-                // } catch (DuplicateKeyException e) {
-                //     throw new AthleteCpfAlreadyExistsException(existAthlete.getCPF());
-                // }
+                try {
+                    return athleterepository.save(existAthlete);
+                } catch (DuplicateKeyException e) {
+                    throw new AthleteCpfAlreadyExistsException(existAthlete.getCPF());
+                }
      }
 
     public void deleteAthlete(String id) {
@@ -127,15 +128,15 @@ public class AthleteService {
         loginRepository.deleteById(userId); // 👈 depois
      }
 
-    // private void validateCpfAvailable(String cpf, String currentAthleteId) {
-    //     if (cpf == null) {
-    //         return;
-    //     }
+    private void validateCpfAvailable(String cpf, String currentAthleteId) {
+        if (cpf == null) {
+            return;
+        }
 
-    //     athleterepository.findByCpf(cpf)
-    //         .filter(athlete -> currentAthleteId == null || !currentAthleteId.equals(athlete.getId()))
-    //         .ifPresent(athlete -> {
-    //             throw new AthleteCpfAlreadyExistsException(cpf);
-    //         });
-    // }
+        athleterepository.findByCpf(cpf)
+            .filter(athlete -> currentAthleteId == null || !currentAthleteId.equals(athlete.getId()))
+            .ifPresent(athlete -> {
+                throw new AthleteCpfAlreadyExistsException(cpf);
+            });
+    }
 }
