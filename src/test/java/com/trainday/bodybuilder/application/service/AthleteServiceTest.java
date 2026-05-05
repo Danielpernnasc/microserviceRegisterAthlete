@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.trainday.bodybuilder.api.DTO.request.AthleteRequest;
@@ -31,6 +32,7 @@ public class AthleteServiceTest {
     @Mock
     LoginRepository loginrepository;
 
+    @Spy
     @InjectMocks
     AthleteService athleteservice;
 
@@ -188,6 +190,40 @@ public class AthleteServiceTest {
         assertEquals(103.5, result.getWeight());
      
     }
+
+    @Test
+void shouldUpdateAthlete_whenCpfIsProvided() {
+    Athlete existAthlete = new Athlete();
+    existAthlete.setCPF("111.111.111-11");
+
+    when(athleterepository.findById("1"))
+        .thenReturn(Optional.of(existAthlete));
+
+    when(athleterepository.save(any(Athlete.class)))
+        .thenReturn(existAthlete);
+
+    // 👇 aqui você precisa MOCKAR o validateCpfAvailable se ele for interno
+    doNothing().when(athleteservice).validateCpfAvailable("999.999.999-99", "1");
+
+    Athlete result = athleteservice.updateAthlete(
+        "1",
+        new AthleteRequest(
+            "999.999.999-99", // 👈 CPF agora vem preenchido
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+        )
+    );
+
+    assertEquals("999.999.999-99", result.getCPF());
+
+    verify(athleteservice).validateCpfAvailable("999.999.999-99", "1");
+}
 
 
 

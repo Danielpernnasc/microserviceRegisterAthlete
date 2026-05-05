@@ -128,7 +128,7 @@ public class AthleteService {
         loginRepository.deleteById(userId); // 👈 depois
      }
 
-    private void validateCpfAvailable(String cpf, String currentAthleteId) {
+    void validateCpfAvailable(String cpf, String currentAthleteId) {
         if (cpf == null) {
             return;
         }
