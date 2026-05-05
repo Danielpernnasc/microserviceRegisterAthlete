@@ -32,7 +32,6 @@ public class AuthControllerTest {
     @Test
     void shouldRegister(){
         LoginRequest loginreq = new LoginRequest(
-                "user-1",
                 "dpericles6@gmail.com",
                 "123456"
         );
@@ -59,7 +58,6 @@ public class AuthControllerTest {
     void shouldLogin(){
 
           LoginRequest loginreq = new LoginRequest(
-                "user-1",
                 "dpericles6@gmail.com",
                 "123456"
         );

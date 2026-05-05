@@ -10,12 +10,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.trainday.bodybuilder.api.DTO.request.AthleteRequest;
 import com.trainday.bodybuilder.api.DTO.response.AthleteResponse;
 import com.trainday.bodybuilder.domain.model.Athlete;
 import com.trainday.bodybuilder.domain.model.Login;
+import com.trainday.bodybuilder.domain.model.enums.Gender;
+import com.trainday.bodybuilder.domain.model.enums.GenderIdentity;
 import com.trainday.bodybuilder.domain.repository.AthleteRepository;
 import com.trainday.bodybuilder.domain.repository.LoginRepository;
 
@@ -29,6 +32,7 @@ public class AthleteServiceTest {
     @Mock
     LoginRepository loginrepository;
 
+    @Spy
     @InjectMocks
     AthleteService athleteservice;
 
@@ -39,6 +43,8 @@ public class AthleteServiceTest {
             "Maria Silva",
             "maria@email.com",
             25L,
+            Gender.FEMALE,
+            GenderIdentity.CISGENDER,
             1.68,
             62.0,
             18L
@@ -66,6 +72,40 @@ public class AthleteServiceTest {
     }
 
     @Test
+    void shouldThrowConflictWhenCpfAlreadyExists(){
+        AthleteRequest request = new AthleteRequest(
+            "12345678900",
+            "Maria Silva",
+            "maria@email.com",
+            25L,
+            Gender.FEMALE,
+            GenderIdentity.CISGENDER,
+            1.68,
+            62.0,
+            18L
+        );
+        Login login = new Login();
+        login.setId("user-1");
+        login.setEmail(request.email());
+        Athlete existingAthlete = new Athlete();
+        existingAthlete.setId("athlete-1");
+        existingAthlete.setCPF(request.cpf());
+
+        when(loginrepository.findByEmail(request.email()))
+            .thenReturn(Optional.of(login));
+        when(athleterepository.findByCpf(request.cpf()))
+            .thenReturn(Optional.of(existingAthlete));
+
+        AthleteCpfAlreadyExistsException exception = assertThrows(
+            AthleteCpfAlreadyExistsException.class,
+            () -> athleteservice.createAthlete(request)
+        );
+
+        assertEquals("CPF already exists: " + request.cpf(), exception.getMessage());
+        verify(athleterepository, never()).save(any(Athlete.class));
+    }
+
+    @Test
     void shouldgetAthleteById(){
           Athlete athlete = new Athlete(
             "1",
@@ -73,6 +113,8 @@ public class AthleteServiceTest {
             "Maria Silva",
             "maria@email.com",
             25L,
+            Gender.FEMALE,
+            GenderIdentity.CISGENDER,
             1.68,
             62.0,
             18L,
@@ -91,6 +133,8 @@ public class AthleteServiceTest {
         assertEquals(athlete.getName(), state.name());
         assertEquals(athlete.getEmail(), state.email());
         assertEquals(athlete.getAge(), state.age());
+        assertEquals(athlete.getGender(), state.gender());
+        assertEquals(athlete.getIdentity(), state.identity());
         assertEquals(athlete.getHeight(), state.height());
         assertEquals(athlete.getWeight(), state.weight());
         assertEquals(athlete.getpercentageFat(), state.percentagefat());
@@ -105,6 +149,8 @@ public class AthleteServiceTest {
         existAthlete.setName("Daniel Péricles do Nascimento");
         existAthlete.setAge(45L);
         existAthlete.setEmail("dpericles6@gmail.com");
+        existAthlete.setGender((Gender.FEMALE));
+        existAthlete.setIdentity(GenderIdentity.CISGENDER);
         existAthlete.setHeight(181.90);
         existAthlete.setWeight(105.10);
         existAthlete.setpercentageFat(15L);
@@ -113,6 +159,8 @@ public class AthleteServiceTest {
         updateAthlete.setCPF("999.999.999-99");
         updateAthlete.setName("Daniel Péricles do Nascimento");
         updateAthlete.setAge(44L);
+        existAthlete.setGender((Gender.MALE));
+        existAthlete.setIdentity(GenderIdentity.CISGENDER);
         updateAthlete.setEmail("dpericles6@hotmail.com");
         updateAthlete.setHeight(182.0);
         updateAthlete.setWeight(104.90);
@@ -129,6 +177,8 @@ public class AthleteServiceTest {
              null,    
             "Daniel Péricles do Nascimento",
             null,
+            Gender.MALE,
+            GenderIdentity.CISGENDER,
             null,
             103.5,
             null
@@ -141,6 +191,40 @@ public class AthleteServiceTest {
      
     }
 
+    @Test
+void shouldUpdateAthlete_whenCpfIsProvided() {
+    Athlete existAthlete = new Athlete();
+    existAthlete.setCPF("111.111.111-11");
+
+    when(athleterepository.findById("1"))
+        .thenReturn(Optional.of(existAthlete));
+
+    when(athleterepository.save(any(Athlete.class)))
+        .thenReturn(existAthlete);
+
+    // 👇 aqui você precisa MOCKAR o validateCpfAvailable se ele for interno
+    doNothing().when(athleteservice).validateCpfAvailable("999.999.999-99", "1");
+
+    Athlete result = athleteservice.updateAthlete(
+        "1",
+        new AthleteRequest(
+            "999.999.999-99", // 👈 CPF agora vem preenchido
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+        )
+    );
+
+    assertEquals("999.999.999-99", result.getCPF());
+
+    verify(athleteservice).validateCpfAvailable("999.999.999-99", "1");
+}
+
 
 
     @Test
@@ -151,6 +235,8 @@ public class AthleteServiceTest {
         existAthlete.setCPF("999.999.999-99");
         existAthlete.setName("Daniel Péricles do Nascimento");
         existAthlete.setAge(45L);
+        existAthlete.setGender(Gender.MALE);
+        existAthlete.setIdentity(GenderIdentity.CISGENDER);
         existAthlete.setEmail("dpericles6@gmail.com");
         existAthlete.setHeight(181.90);
         existAthlete.setWeight(105.10);

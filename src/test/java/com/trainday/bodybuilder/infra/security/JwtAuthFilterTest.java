@@ -22,6 +22,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
 
 @ExtendWith(MockitoExtension.class)
 public class JwtAuthFilterTest {
@@ -37,10 +38,46 @@ public class JwtAuthFilterTest {
 
     @InjectMocks
     JwtAuthFilter jwtAuthFilter;
+    
+
+  
 
     @AfterEach
     void clearContext() {
         SecurityContextHolder.clearContext();
+    }
+
+       @Test
+    void shouldNotFilter_swaggerPaths() {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+
+        when(request.getServletPath()).thenReturn("/swagger-ui/index.html");
+
+        boolean result = jwtAuthFilter.shouldNotFilter(request);
+
+        assertTrue(result);
+    }
+
+    @Test
+    void shouldNotFilter_apiDocs() {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+
+        when(request.getServletPath()).thenReturn("/v3/api-docs");
+
+        boolean result = jwtAuthFilter.shouldNotFilter(request);
+
+        assertTrue(result);
+    }
+
+    @Test
+    void shouldNotFilter_otherPath() {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+
+        when(request.getServletPath()).thenReturn("/api/users");
+
+        boolean result = jwtAuthFilter.shouldNotFilter(request);
+
+        assertFalse(result);
     }
 
     @Test
