@@ -2,8 +2,6 @@ package com.trainday.bodybuilder.application.service;
 
 
 import java.util.Optional;
-
-// import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import com.mongodb.DuplicateKeyException;
@@ -85,7 +83,6 @@ public class AthleteService {
                     validateCpfAvailable(cpf, id);
                     existAthlete.setCPF(cpf);
                 });
-                // .ifPresent(existAthlete::setCPF);
             Optional.ofNullable(updateAthlete.name())
                 .ifPresent(existAthlete::setName);
                 

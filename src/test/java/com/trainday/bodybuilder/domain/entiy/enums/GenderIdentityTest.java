@@ -3,8 +3,6 @@ package com.trainday.bodybuilder.domain.entiy.enums;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
-
-import com.trainday.bodybuilder.domain.model.enums.Gender;
 import com.trainday.bodybuilder.domain.model.enums.GenderIdentity;
 
 public class GenderIdentityTest {
@@ -24,9 +22,9 @@ public class GenderIdentityTest {
     @Test
     void shouldThrowsException_whenValideValue(){
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            Gender.forValue("invalid");
+            GenderIdentity.formValue("invalid");
         });
-        assertEquals("Gender invalid: invalid", exception.getMessage());
+        assertEquals("Identity invalid: invalid", exception.getMessage());
     }
 
     @Test
