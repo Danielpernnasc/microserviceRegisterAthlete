@@ -31,7 +31,7 @@ public class SecurityConfig {
     public SecurityFilterChain swaggerFilterChain(HttpSecurity http) throws Exception {
         return http
                 .securityMatcher(swaggerRequestMatcher())
-                .csrf(csrf -> csrf.disable())
+                .csrf(csrf -> csrf.disable()) // Safe: application is stateless and uses JWT tokens in Authorization header (no cookies)
                 .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
                 .build();
     }
@@ -40,7 +40,7 @@ public class SecurityConfig {
     @Order(2)
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
             return http
-                    .csrf(csrf -> csrf.disable())
+                    .csrf(csrf -> csrf.disable()) // Safe: application is stateless and uses JWT tokens in Authorization header (no cookies)
                     .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                    .authorizeHttpRequests(auth -> auth
                     .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
