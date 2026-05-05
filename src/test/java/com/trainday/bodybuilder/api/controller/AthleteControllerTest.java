@@ -33,7 +33,7 @@ public class AthleteControllerTest {
             "Daniel Péricles do Nascimento",
             "dpericles6@gmail.com",
             45L,
-            Gender.Male,
+            Gender.MALE,
             GenderIdentity.CISGENDER,
             182.5,
             105.5,
@@ -45,7 +45,7 @@ public class AthleteControllerTest {
         athlete.setName("Daniel Péricles do Nascimento");
         athlete.setEmail("dpericles6@gmail.com");
         athlete.setAge(45L);
-        athlete.setGender(Gender.Male);
+        athlete.setGender(Gender.MALE);
         athlete.setIdentity(GenderIdentity.CISGENDER);
         athlete.setHeight(182.5);
         athlete.setWeight(105.5);
@@ -77,7 +77,7 @@ public class AthleteControllerTest {
             "Daniel Péricles do Nascimento",
             "dpericles6@gmail.com",
             45L,
-            Gender.Male,
+            Gender.MALE,
             GenderIdentity.CISGENDER,
             182.5,
             105.5,
@@ -95,7 +95,7 @@ public class AthleteControllerTest {
             assertEquals("Daniel Péricles do Nascimento", result.name());
             assertEquals("dpericles6@gmail.com", result.email());
             assertEquals(45L, result.age());
-            assertEquals(Gender.Male, result.gender());
+            assertEquals(Gender.MALE, result.gender());
             assertEquals(GenderIdentity.CISGENDER, result.identity());
             assertEquals(182.5, result.height());
             assertEquals(105.5, result.weight());
@@ -111,7 +111,7 @@ public class AthleteControllerTest {
             "Daniel Péricles do Nascimento",
             "dpericles6@gmail.com",
             45L,
-            Gender.Male,
+            Gender.MALE,
             GenderIdentity.CISGENDER,
             182.5,
             105.5,
@@ -123,7 +123,7 @@ public class AthleteControllerTest {
         athlete.setName("Daniel Péricles do Nascimento");
         athlete.setEmail("dpericles6@gmail.com");
         athlete.setAge(45L);
-         athlete.setGender(Gender.Male);
+         athlete.setGender(Gender.MALE);
          athlete.setIdentity(GenderIdentity.CISGENDER);
         athlete.setHeight(182.5);
         athlete.setWeight(105.5);
@@ -139,7 +139,7 @@ public class AthleteControllerTest {
         assertEquals("Daniel Péricles do Nascimento", athleteReq.name());
         assertEquals("dpericles6@gmail.com", athleteReq.email());
         assertEquals(45L, athleteReq.age());
-        assertEquals(Gender.Male, athleteReq.gender());
+        assertEquals(Gender.MALE, athleteReq.gender());
         assertEquals(GenderIdentity.CISGENDER, athleteReq.identity());
         assertEquals(182.5, athleteReq.height());
         assertEquals(105.5, athleteReq.weight());
@@ -156,7 +156,7 @@ public class AthleteControllerTest {
             existAthlete.setCPF("999.999.999-99");
             existAthlete.setName("Daniel Péricles do Nascimento");
             existAthlete.setAge(45L);
-            existAthlete.setGender(Gender.Male);
+            existAthlete.setGender(Gender.MALE);
             existAthlete.setIdentity(GenderIdentity.CISGENDER);
             existAthlete.setEmail("dpericles6@gmail.com");
             existAthlete.setHeight(181.90);

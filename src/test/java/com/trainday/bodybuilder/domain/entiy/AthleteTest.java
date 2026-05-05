@@ -19,7 +19,7 @@ public class AthleteTest {
             "Daniel Péricles do Nascimento",
             "dpericles6@gmail.com",
             45L,
-            Gender.Male,
+            Gender.MALE,
             GenderIdentity.CISGENDER,
             1.82,
             105.40,
@@ -32,7 +32,7 @@ public class AthleteTest {
         assertEquals("Daniel Péricles do Nascimento", athlete.getName());
         assertEquals("dpericles6@gmail.com", athlete.getEmail());
         assertEquals(45L, athlete.getAge());
-        assertEquals(Gender.Male, athlete.getGender());
+        assertEquals(Gender.MALE, athlete.getGender());
         assertEquals(GenderIdentity.CISGENDER, athlete.getIdentity());
         assertEquals(1.82, athlete.getHeight());
         assertEquals(105.40, athlete.getWeight());
@@ -49,7 +49,7 @@ public class AthleteTest {
         athlete.setName("Teste");
         athlete.setEmail("teste@email.com");
         athlete.setAge(30L);
-        athlete.setGender(Gender.Male);
+        athlete.setGender(Gender.MALE);
         athlete.setIdentity(GenderIdentity.CISGENDER);
         athlete.setHeight(1.75);
         athlete.setWeight(80.0);
@@ -61,7 +61,7 @@ public class AthleteTest {
         assertEquals("Teste", athlete.getName());
         assertEquals("teste@email.com", athlete.getEmail());
         assertEquals(30L, athlete.getAge());
-        assertEquals(Gender.Male, athlete.getGender());
+        assertEquals(Gender.MALE, athlete.getGender());
         assertEquals(GenderIdentity.CISGENDER, athlete.getIdentity());
         assertEquals(1.75, athlete.getHeight());
         assertEquals(80.0, athlete.getWeight());

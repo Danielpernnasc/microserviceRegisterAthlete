@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum Gender {
-    Male("Homem"),
-    Female("Mulher"),
-    NO_Binary("Não Binário");
+    MALE("Homem"),
+    FEMALE("Mulher"),
+    NO_BINARY("Não Binário");
 
     private final String state;
 

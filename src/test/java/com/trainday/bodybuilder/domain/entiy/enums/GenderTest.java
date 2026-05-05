@@ -12,14 +12,14 @@ public class GenderTest {
     void shouldReturnGender_whenValidValue(){
         Gender result = Gender.forValue("Homem");
 
-        assertEquals(Gender.Male, result);
+        assertEquals(Gender.MALE, result);
     }
 
     @Test
     void shouldIgnoreCase_whenValidValue(){
         Gender result = Gender.forValue("Mulher");
 
-        assertEquals(Gender.Female, result);
+        assertEquals(Gender.FEMALE, result);
     }
 
     @Test
@@ -32,7 +32,7 @@ public class GenderTest {
 
     @Test
     void shouldReturnState_whenGetState(){
-        String result = Gender.Male.getState();
+        String result = Gender.MALE.getState();
         assertEquals("Homem", result);
     }
 

@@ -43,7 +43,7 @@ public class AthleteServiceTest {
             "Maria Silva",
             "maria@email.com",
             25L,
-            Gender.Female,
+            Gender.FEMALE,
             GenderIdentity.CISGENDER,
             1.68,
             62.0,
@@ -78,7 +78,7 @@ public class AthleteServiceTest {
             "Maria Silva",
             "maria@email.com",
             25L,
-            Gender.Female,
+            Gender.FEMALE,
             GenderIdentity.CISGENDER,
             1.68,
             62.0,
@@ -113,7 +113,7 @@ public class AthleteServiceTest {
             "Maria Silva",
             "maria@email.com",
             25L,
-            Gender.Female,
+            Gender.FEMALE,
             GenderIdentity.CISGENDER,
             1.68,
             62.0,
@@ -149,7 +149,7 @@ public class AthleteServiceTest {
         existAthlete.setName("Daniel Péricles do Nascimento");
         existAthlete.setAge(45L);
         existAthlete.setEmail("dpericles6@gmail.com");
-        existAthlete.setGender((Gender.Female));
+        existAthlete.setGender((Gender.FEMALE));
         existAthlete.setIdentity(GenderIdentity.CISGENDER);
         existAthlete.setHeight(181.90);
         existAthlete.setWeight(105.10);
@@ -159,7 +159,7 @@ public class AthleteServiceTest {
         updateAthlete.setCPF("999.999.999-99");
         updateAthlete.setName("Daniel Péricles do Nascimento");
         updateAthlete.setAge(44L);
-        existAthlete.setGender((Gender.Male));
+        existAthlete.setGender((Gender.MALE));
         existAthlete.setIdentity(GenderIdentity.CISGENDER);
         updateAthlete.setEmail("dpericles6@hotmail.com");
         updateAthlete.setHeight(182.0);
@@ -177,7 +177,7 @@ public class AthleteServiceTest {
              null,    
             "Daniel Péricles do Nascimento",
             null,
-            Gender.Male,
+            Gender.MALE,
             GenderIdentity.CISGENDER,
             null,
             103.5,
@@ -235,7 +235,7 @@ void shouldUpdateAthlete_whenCpfIsProvided() {
         existAthlete.setCPF("999.999.999-99");
         existAthlete.setName("Daniel Péricles do Nascimento");
         existAthlete.setAge(45L);
-        existAthlete.setGender(Gender.Male);
+        existAthlete.setGender(Gender.MALE);
         existAthlete.setIdentity(GenderIdentity.CISGENDER);
         existAthlete.setEmail("dpericles6@gmail.com");
         existAthlete.setHeight(181.90);
