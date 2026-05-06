@@ -51,8 +51,6 @@
         </dependency>
 
         <!-- Lombok (opcional, reduz boilerplate) -->
-
-		
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
