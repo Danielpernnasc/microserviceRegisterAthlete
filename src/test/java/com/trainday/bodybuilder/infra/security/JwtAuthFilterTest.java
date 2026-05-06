@@ -130,6 +130,30 @@ public class JwtAuthFilterTest {
        verify(filterChain).doFilter(request, response);
     }
 
+   @Test
+    void shouldSkipJwtValidationForAthletePath() throws Exception {
+
+        MockHttpServletRequest request =
+                new MockHttpServletRequest();
+
+        request.setServletPath("/athlete/123");
+
+        MockHttpServletResponse response =
+                new MockHttpServletResponse();
+
+        FilterChain filterChain = mock(FilterChain.class);
+
+        jwtAuthFilter.doFilterInternal(
+                request,
+                response,
+                filterChain
+        );
+
+        verify(filterChain).doFilter(request, response);
+
+        verifyNoInteractions(jwtService);
+    }
+
 
     
 }
