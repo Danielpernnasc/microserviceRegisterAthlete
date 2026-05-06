@@ -46,6 +46,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
                                     throws ServletException, IOException {
 
+            String path = request.getServletPath();
+
+            if (path.startsWith("/athlete/")) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+
             String authHeader = request.getHeader("Authorization");
 
             if(authHeader == null || !authHeader.startsWith("Bearer ")){
@@ -53,15 +60,21 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 return;
             }
 
+
+
             String token = authHeader.substring(7);
 
             if(jwtService.isTokenValid(token)){
                 String email = jwtService.extractEmail(token);
                 UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
-                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userDetails, null, List.of());
+              UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
+                    userDetails,
+                    null,
+                    List.of()
+                );
 
-                SecurityContextHolder.getContext().setAuthentication((@Nullable Authentication) auth);
+            SecurityContextHolder.getContext().setAuthentication(auth);
             }
 
             filterChain.doFilter(request, response);
