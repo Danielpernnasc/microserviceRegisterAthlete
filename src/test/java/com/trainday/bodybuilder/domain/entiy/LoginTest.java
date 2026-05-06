@@ -10,10 +10,9 @@ public class LoginTest {
 
     @Test
     void shouldCreateLogin(){
-        Login login = new Login(
-            "dpericles6@gmail.com",
-            "123456"
-        );
+        Login login = new Login();
+        login.setEmail("dpericles6@gmail.com");
+        login.setPassword("123456");
 
         assertEquals(null, login.getId());
         assertEquals("dpericles6@gmail.com", login.getEmail());

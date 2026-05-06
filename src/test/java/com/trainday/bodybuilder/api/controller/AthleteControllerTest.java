@@ -36,12 +36,11 @@ public class AthleteControllerTest {
             Gender.MALE,
             GenderIdentity.CISGENDER,
             182.5,
-            105.5,
-            18L
+            105.5
         );
 
         Athlete athlete = new Athlete();
-        athlete.setCPF("99999999999");
+        athlete.setCpf("99999999999");
         athlete.setName("Daniel Péricles do Nascimento");
         athlete.setEmail("dpericles6@gmail.com");
         athlete.setAge(45L);
@@ -49,14 +48,13 @@ public class AthleteControllerTest {
         athlete.setIdentity(GenderIdentity.CISGENDER);
         athlete.setHeight(182.5);
         athlete.setWeight(105.5);
-        athlete.setpercentageFat(18L);
 
         when(athleteservice.createAthlete(athleteReq)).thenReturn(athlete);
 
         Athlete created = athleteController.save(athleteReq);
 
         assertNotNull(created);
-        assertEquals(athleteReq.cpf(), created.getCPF());
+        assertEquals(athleteReq.cpf(), created.getCpf());
         assertEquals(athleteReq.name(), created.getName());
         assertEquals(athleteReq.email(), created.getEmail());
         assertEquals(athleteReq.age(), created.getAge());
@@ -64,7 +62,6 @@ public class AthleteControllerTest {
         assertEquals(athleteReq.identity(), created.getIdentity());
         assertEquals(athleteReq.height(), created.getHeight());
         assertEquals(athleteReq.weight(), created.getWeight());
-        assertEquals(athleteReq.percentagefat(), created.getpercentageFat());
 
         verify(athleteservice).createAthlete(athleteReq);
     }
@@ -80,8 +77,7 @@ public class AthleteControllerTest {
             Gender.MALE,
             GenderIdentity.CISGENDER,
             182.5,
-            105.5,
-            18L
+            105.5
         );
 
         when(athleteservice.getAthleteById("1"))
@@ -99,9 +95,8 @@ public class AthleteControllerTest {
             assertEquals(GenderIdentity.CISGENDER, result.identity());
             assertEquals(182.5, result.height());
             assertEquals(105.5, result.weight());
-            assertEquals(18L, result.percentagefat());
 
-             verify(athleteservice).getAthleteById("1");
+            verify(athleteservice).getAthleteById("1");
     }
 
     @Test
@@ -114,12 +109,11 @@ public class AthleteControllerTest {
             Gender.MALE,
             GenderIdentity.CISGENDER,
             182.5,
-            105.5,
-            18L
+            105.5
         );
 
         Athlete athlete = new Athlete();
-        athlete.setCPF("99999999999");
+        athlete.setCpf("99999999999");
         athlete.setName("Daniel Péricles do Nascimento");
         athlete.setEmail("dpericles6@gmail.com");
         athlete.setAge(45L);
@@ -127,7 +121,6 @@ public class AthleteControllerTest {
          athlete.setIdentity(GenderIdentity.CISGENDER);
         athlete.setHeight(182.5);
         athlete.setWeight(105.5);
-        athlete.setpercentageFat(18L);
 
         when(athleteservice.updateAthlete("1", athleteReq))
             .thenReturn(athlete);
@@ -143,7 +136,6 @@ public class AthleteControllerTest {
         assertEquals(GenderIdentity.CISGENDER, athleteReq.identity());
         assertEquals(182.5, athleteReq.height());
         assertEquals(105.5, athleteReq.weight());
-        assertEquals(18L, athleteReq.percentagefat());
         
         verify(athleteservice).updateAthlete("1",athleteReq);
 
@@ -153,7 +145,7 @@ public class AthleteControllerTest {
     void shouldDeleteAthlete(){
           Athlete existAthlete = new Athlete();
             existAthlete.setId("1");
-            existAthlete.setCPF("999.999.999-99");
+            existAthlete.setCpf("999.999.999-99");
             existAthlete.setName("Daniel Péricles do Nascimento");
             existAthlete.setAge(45L);
             existAthlete.setGender(Gender.MALE);
@@ -161,7 +153,6 @@ public class AthleteControllerTest {
             existAthlete.setEmail("dpericles6@gmail.com");
             existAthlete.setHeight(181.90);
             existAthlete.setWeight(105.10);
-            existAthlete.setpercentageFat(15L);
             existAthlete.setUserId("user-1");
     
 

@@ -38,7 +38,7 @@ public class AthleteService {
         validateCpfAvailable(reqAthlete.cpf(), null);
          
         Athlete athlete = new Athlete();
-        athlete.setCPF(reqAthlete.cpf());
+        athlete.setCpf(reqAthlete.cpf());
          athlete.setName(reqAthlete.name());
          athlete.setEmail(reqAthlete.email());
         athlete.setAge(reqAthlete.age());
@@ -46,7 +46,6 @@ public class AthleteService {
         athlete.setIdentity(reqAthlete.identity());
         athlete.setHeight(reqAthlete.height());
         athlete.setWeight(reqAthlete.weight());
-        athlete.setpercentageFat(reqAthlete.percentagefat());
         athlete.setUserId(user.getId());
 
         try {
@@ -62,15 +61,14 @@ public class AthleteService {
 
         return new AthleteResponse(
             athlete.getId(),
-            athlete.getCPF(),
+            athlete.getCpf(),
             athlete.getName(),
             athlete.getEmail(),
             athlete.getAge(),
             athlete.getGender(),
             athlete.getIdentity(),
             athlete.getHeight(),
-            athlete.getWeight(),
-            athlete.getpercentageFat()
+            athlete.getWeight()
         );
     }
 
@@ -81,7 +79,7 @@ public class AthleteService {
             Optional.ofNullable(updateAthlete.cpf())
                 .ifPresent(cpf -> {
                     validateCpfAvailable(cpf, id);
-                    existAthlete.setCPF(cpf);
+                    existAthlete.setCpf(cpf);
                 });
             Optional.ofNullable(updateAthlete.name())
                 .ifPresent(existAthlete::setName);
@@ -104,14 +102,11 @@ public class AthleteService {
             Optional.ofNullable(updateAthlete.weight())
                 .ifPresent(existAthlete::setWeight);
 
-            Optional.ofNullable(updateAthlete.percentagefat())
-                .ifPresent(existAthlete::setpercentageFat);
 
-                
                 try {
                     return athleterepository.save(existAthlete);
                 } catch (DuplicateKeyException e) {
-                    throw new AthleteCpfAlreadyExistsException(existAthlete.getCPF());
+                    throw new AthleteCpfAlreadyExistsException(existAthlete.getCpf());
                 }
      }
 
