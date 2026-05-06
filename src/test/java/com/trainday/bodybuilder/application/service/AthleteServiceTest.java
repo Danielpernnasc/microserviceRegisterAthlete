@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.mongodb.DuplicateKeyException;
 import com.trainday.bodybuilder.api.DTO.request.AthleteRequest;
 import com.trainday.bodybuilder.api.DTO.response.AthleteResponse;
 import com.trainday.bodybuilder.domain.model.Athlete;
@@ -103,6 +104,38 @@ public class AthleteServiceTest {
     }
 
     @Test
+    void shouldThrowExceptionWhenCpfAlreadyExists() {
+
+           AthleteRequest request = new AthleteRequest(
+            "12345678900",
+            "Maria Silva",
+            "maria@email.com",
+            25L,
+            Gender.FEMALE,
+            GenderIdentity.CISGENDER,
+            1.68,
+            62.0
+        );
+
+        Login login = new Login();
+        login.setId("user-1");
+        login.setEmail(request.email());
+
+
+
+        when(loginrepository.findByEmail(anyString()))
+                .thenReturn(Optional.of(login));
+
+        when(athleterepository.save(any(Athlete.class)))
+                        .thenThrow(DuplicateKeyException.class);
+
+        assertThrows(
+                AthleteCpfAlreadyExistsException.class,
+                () -> athleteservice.createAthlete(request)
+        );
+    }
+
+    @Test
     void shouldgetAthleteById(){
           Athlete athlete = new Athlete(
             "1",
@@ -183,38 +216,68 @@ public class AthleteServiceTest {
     }
 
     @Test
-void shouldUpdateAthlete_whenCpfIsProvided() {
-    Athlete existAthlete = new Athlete();
-    existAthlete.setCpf("111.111.111-11");
+    void shouldUpdateAthlete_whenCpfIsProvided() {
+        Athlete existAthlete = new Athlete();
+        existAthlete.setCpf("111.111.111-11");
 
-    when(athleterepository.findById("1"))
-        .thenReturn(Optional.of(existAthlete));
+        when(athleterepository.findById("1"))
+            .thenReturn(Optional.of(existAthlete));
 
-    when(athleterepository.save(any(Athlete.class)))
-        .thenReturn(existAthlete);
+        when(athleterepository.save(any(Athlete.class)))
+            .thenReturn(existAthlete);
 
-    // 👇 aqui você precisa MOCKAR o validateCpfAvailable se ele for interno
-    doNothing().when(athleteservice).validateCpfAvailable("999.999.999-99", "1");
+        // 👇 aqui você precisa MOCKAR o validateCpfAvailable se ele for interno
+        doNothing().when(athleteservice).validateCpfAvailable("999.999.999-99", "1");
 
-    Athlete result = athleteservice.updateAthlete(
-        "1",
-        new AthleteRequest(
-            "999.999.999-99", // 👈 CPF agora vem preenchido
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null
-        )
-    );
+        Athlete result = athleteservice.updateAthlete(
+            "1",
+            new AthleteRequest(
+                "999.999.999-99", // 👈 CPF agora vem preenchido
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+            )
+        );
 
-    assertEquals("999.999.999-99", result.getCpf());
+        assertEquals("999.999.999-99", result.getCpf());
+        
 
-    verify(athleteservice).validateCpfAvailable("999.999.999-99", "1");
-}
+        verify(athleteservice).validateCpfAvailable("999.999.999-99", "1");
+    }
 
+
+    @Test
+    void shouldThrowExceptionWhenCpfAlreadyExistsforUpdate() {
+
+        Athlete existAthlete = new Athlete();
+        existAthlete.setCpf("111.111.111-11");
+
+           AthleteRequest request =  new AthleteRequest(
+                "999.999.999-99", // 👈 CPF agora vem preenchido
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+            );
+
+        when(athleterepository.findById(anyString()))
+                .thenReturn(Optional.of(existAthlete));
+
+        when(athleterepository.save(any(Athlete.class)))
+                .thenThrow(DuplicateKeyException.class);
+
+        assertThrows(
+                AthleteCpfAlreadyExistsException.class,
+                () -> athleteservice.updateAthlete("1", request)
+        );
+    }
 
 
     @Test
