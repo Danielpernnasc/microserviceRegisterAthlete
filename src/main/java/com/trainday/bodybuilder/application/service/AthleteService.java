@@ -72,6 +72,11 @@ public class AthleteService {
         );
     }
 
+    public Athlete findbyCpf(String cpf){
+        return athleterepository.findByCpf(cpf)
+                .orElseThrow(() -> new RuntimeException(ATHLETE_NOT_FOUND + cpf));
+    }
+
 	 public Athlete updateAthlete(String id,  AthleteRequest updateAthlete){
            Athlete existAthlete = athleterepository.findById(id)
         .orElseThrow(() -> new RuntimeException(ATHLETE_NOT_FOUND));
@@ -108,6 +113,44 @@ public class AthleteService {
                 } catch (DuplicateKeyException e) {
                     throw new AthleteCpfAlreadyExistsException(existAthlete.getCpf());
                 }
+     }
+
+     public Athlete pathAthlete(String id, AthleteRequest req){
+            Athlete athlete = athleterepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Athlete not found"));
+
+                if(req.cpf() != null){
+                    athlete.setCpf(req.cpf());
+                }
+
+                if(req.name() != null){
+                    athlete.setName(req.name());
+                }
+                
+                if(req.email() != null){
+                    athlete.setEmail(req.email());
+                }
+                if(req.age() != null){
+                    athlete.setAge(req.age());
+                }
+
+                if(req.gender() != null){
+                    athlete.setGender(req.gender());
+                }
+
+                if(req.identity() != null){
+                    athlete.setIdentity(req.identity());
+                }
+
+                if(req.weight() != null){
+                    athlete.setWeight(req.weight());
+                }
+
+                if(req.height() != null){
+                    athlete.setHeight(req.height());
+                }
+
+                return athleterepository.save(athlete);
      }
 
     public void deleteAthlete(String id) {
