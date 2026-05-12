@@ -3,8 +3,6 @@ package com.trainday.bodybuilder.domain.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
-
 import com.trainday.bodybuilder.domain.model.enums.Gender;
 import com.trainday.bodybuilder.domain.model.enums.GenderIdentity;
 

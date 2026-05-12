@@ -2,13 +2,18 @@ package com.trainday.bodybuilder.api.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
+
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import com.trainday.bodybuilder.api.DTO.request.AthleteRequest;
 import com.trainday.bodybuilder.api.DTO.response.AthleteResponse;
@@ -16,6 +21,7 @@ import com.trainday.bodybuilder.application.service.AthleteService;
 import com.trainday.bodybuilder.domain.model.Athlete;
 import com.trainday.bodybuilder.domain.model.enums.Gender;
 import com.trainday.bodybuilder.domain.model.enums.GenderIdentity;
+import com.trainday.bodybuilder.domain.repository.AthleteRepository;
 
 @ExtendWith(MockitoExtension.class)
 public class AthleteControllerTest {
@@ -23,13 +29,16 @@ public class AthleteControllerTest {
     @Mock
     AthleteService athleteservice;
 
+    @Mock
+    AthleteRepository athleteRepository;
+
     @InjectMocks
     AthleteController athleteController;
 
     @Test
     void shouldSaveAhtlete() {
         AthleteRequest athleteReq = new AthleteRequest(
-            "99999999999",
+            "123.456.789-00",
             "Daniel Péricles do Nascimento",
             "dpericles6@gmail.com",
             45L,
@@ -40,7 +49,7 @@ public class AthleteControllerTest {
         );
 
         Athlete athlete = new Athlete();
-        athlete.setCpf("99999999999");
+        athlete.setCpf("123.456.789-00");
         athlete.setName("Daniel Péricles do Nascimento");
         athlete.setEmail("dpericles6@gmail.com");
         athlete.setAge(45L);
@@ -70,7 +79,7 @@ public class AthleteControllerTest {
     void shouldFindByid() {
         AthleteResponse athleteResponse = new AthleteResponse(
             "1",
-            "99999999999",
+            "123.456.789-00",
             "Daniel Péricles do Nascimento",
             "dpericles6@gmail.com",
             45L,
@@ -87,7 +96,7 @@ public class AthleteControllerTest {
     
 
             assertEquals("1", result.id());
-            assertEquals("99999999999", result.cpf());
+            assertEquals("123.456.789-00", result.cpf());
             assertEquals("Daniel Péricles do Nascimento", result.name());
             assertEquals("dpericles6@gmail.com", result.email());
             assertEquals(45L, result.age());
@@ -102,7 +111,7 @@ public class AthleteControllerTest {
     @Test
     void shouldUpdateAthlete(){
         AthleteRequest athleteReq = new AthleteRequest(
-            "99999999999",
+            "123.456.789-00",
             "Daniel Péricles do Nascimento",
             "dpericles6@gmail.com",
             45L,
@@ -113,7 +122,7 @@ public class AthleteControllerTest {
         );
 
         Athlete athlete = new Athlete();
-        athlete.setCpf("99999999999");
+        athlete.setCpf("123.456.789-00");
         athlete.setName("Daniel Péricles do Nascimento");
         athlete.setEmail("dpericles6@gmail.com");
         athlete.setAge(45L);
@@ -128,7 +137,7 @@ public class AthleteControllerTest {
         
 
         assertNotNull(updated);
-        assertEquals("99999999999", athleteReq.cpf());
+        assertEquals("123.456.789-00", athleteReq.cpf());
         assertEquals("Daniel Péricles do Nascimento", athleteReq.name());
         assertEquals("dpericles6@gmail.com", athleteReq.email());
         assertEquals(45L, athleteReq.age());
@@ -140,6 +149,75 @@ public class AthleteControllerTest {
         verify(athleteservice).updateAthlete("1",athleteReq);
 
     }
+
+    @Test
+    void shouldPatchAtlhete(){
+
+          AthleteRequest athleteReq = new AthleteRequest(
+            "123.456.789-00",
+            "Daniel Péricles do Nascimento",
+            "dpericles6@gmail.com",
+            45L,
+            Gender.MALE,
+            GenderIdentity.CISGENDER,
+            107.5,
+            107.5
+        );
+        Athlete athlete = new Athlete();
+        athlete.setHeight(182.5);
+
+
+        when(athleteservice.pathAthlete("1", athleteReq))
+        .thenReturn(athlete);
+
+    Athlete patch = athleteController.patchAthlete("1", athleteReq);
+
+
+        assertNotNull(patch);
+        assertEquals(182.5, athlete.getHeight());
+
+    }
+
+    @Test
+    void shouldFindByCpf(){
+         Athlete athlete = new Athlete();
+        athlete.setId("1");
+        athlete.setCpf("123.456.789-00");
+        athlete.setName("Daniel Péricles do Nascimento");
+        athlete.setEmail("dpericles6@gmail.com");
+        athlete.setAge(45L);
+        athlete.setGender(Gender.MALE);
+        athlete.setIdentity(GenderIdentity.CISGENDER);
+        athlete.setHeight(182.5);
+        athlete.setWeight(105.5);
+
+         when(athleteservice.findbyCpf(anyString()))
+        .thenReturn(athlete);
+
+        ResponseEntity<AthleteResponse> result =
+            athleteController.findByCpf("123.456.789-00");
+
+        assertNotNull(result);
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+
+        AthleteResponse body = result.getBody();
+    
+        assertNotNull(body);
+        assertEquals("1", body.id());
+        assertEquals("Daniel Péricles do Nascimento", body.name());
+        assertEquals("123.456.789-00", body.cpf());
+        assertEquals("dpericles6@gmail.com", body.email());
+        assertEquals(45L, body.age());
+        assertEquals(Gender.MALE, body.gender());
+        assertEquals(GenderIdentity.CISGENDER, body.identity());
+        assertEquals(182.5, body.height());
+        assertEquals(105.5, body.weight());
+
+        verify(athleteservice).findbyCpf("123.456.789-00");
+
+    }
+
+
 
     @Test
     void shouldDeleteAthlete(){
