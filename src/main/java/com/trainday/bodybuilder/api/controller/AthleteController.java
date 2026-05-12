@@ -57,14 +57,14 @@ public class AthleteController {
 
         return ResponseEntity.ok(new AthleteResponse(
             athlete.getId(),
-            athlete.getName(),
             athlete.getCpf(),
+            athlete.getName(),
             athlete.getEmail(),
             athlete.getAge(),
             athlete.getGender(),
             athlete.getIdentity(),
             athlete.getHeight(),
-            athlete.getHeight()
+            athlete.getWeight()
         ));
     }
 
