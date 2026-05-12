@@ -5,7 +5,9 @@ package com.trainday.bodybuilder.application.service;
 import java.util.Optional;
 
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +17,7 @@ import com.trainday.bodybuilder.domain.model.Athlete;
 import com.trainday.bodybuilder.domain.model.Login;
 import com.trainday.bodybuilder.domain.repository.AthleteRepository;
 import com.trainday.bodybuilder.domain.repository.LoginRepository;
-import com.trainday.bodybuilder.infra.security.JwtService;
+import com.trainday.bodybuilder.infra.Service.JwtService;
 
 @Service
 public class LoginService {
@@ -54,26 +56,36 @@ public class LoginService {
     }
 
 
-    public String authenticate(LoginRequest request) {
+   public String authenticate(LoginRequest request) {
+    try {
         authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(request.email(), request.password())
+            new UsernamePasswordAuthenticationToken(
+                request.email(),
+                request.password()
+            )
         );
+    } catch (BadCredentialsException ex) {
+        throw new BadCredentialsException("Invalid email or password");
+    }
 
     Login user = loginRepository.findByEmail(request.email())
-            .orElseThrow(() -> new RuntimeException("User not found"));
+            .orElseThrow(() ->
+                new UsernameNotFoundException("User not found")
+            );
 
-    Optional<Athlete> athleteOpt = athleteRepository.findByUserId(user.getId());
+    Optional<Athlete> athleteOpt =
+            athleteRepository.findByUserId(user.getId());
 
     String athlete = athleteOpt
-        .map(Athlete::getId)
-        .orElse(null);
+            .map(Athlete::getId)
+            .orElse(null);
 
-        return jwtservice.generateToken(
-                user.getEmail(),
-                user.getId(),
-                athlete
-        ); // ← gera o token
-    }
+    return jwtservice.generateToken(
+            user.getEmail(),
+            user.getId(),
+            athlete
+    );
+}
 
 
 

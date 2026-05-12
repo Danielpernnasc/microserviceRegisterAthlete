@@ -1,4 +1,4 @@
-package com.trainday.bodybuilder.infra.security;
+package com.trainday.bodybuilder.infra.Service;
 
 
 

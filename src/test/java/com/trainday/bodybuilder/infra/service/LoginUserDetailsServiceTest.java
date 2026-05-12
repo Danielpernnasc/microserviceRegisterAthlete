@@ -1,4 +1,4 @@
-package com.trainday.bodybuilder.infra.security;
+package com.trainday.bodybuilder.infra.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -15,6 +15,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import com.trainday.bodybuilder.domain.model.Login;
 import com.trainday.bodybuilder.domain.repository.LoginRepository;
+import com.trainday.bodybuilder.infra.Service.LoginUserDetailsService;
 
 @ExtendWith(MockitoExtension.class)
 public class LoginUserDetailsServiceTest {

@@ -1,4 +1,4 @@
-package com.trainday.bodybuilder.infra.security;
+package com.trainday.bodybuilder.infra.Config;
 
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.mockito.Mockito.*;
@@ -32,6 +32,9 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import com.trainday.bodybuilder.api.controller.AuthController;
 import com.trainday.bodybuilder.application.service.LoginService;
+import com.trainday.bodybuilder.infra.Config.SecurityConfig;
+import com.trainday.bodybuilder.infra.Service.JwtService;
+import com.trainday.bodybuilder.infra.security.JwtAuthFilter;
 
 import jakarta.servlet.Filter;
 import jakarta.servlet.ServletException;

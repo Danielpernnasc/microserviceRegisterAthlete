@@ -20,7 +20,7 @@ import com.trainday.bodybuilder.domain.model.Athlete;
 import com.trainday.bodybuilder.domain.model.Login;
 import com.trainday.bodybuilder.domain.repository.AthleteRepository;
 import com.trainday.bodybuilder.domain.repository.LoginRepository;
-import com.trainday.bodybuilder.infra.security.JwtService;
+import com.trainday.bodybuilder.infra.Service.JwtService;
 
 @ExtendWith(MockitoExtension.class)
 public class LoginServiceTest {

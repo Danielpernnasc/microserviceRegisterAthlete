@@ -1,4 +1,4 @@
-package com.trainday.bodybuilder.infra.security;
+package com.trainday.bodybuilder.infra.Service;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;

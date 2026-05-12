@@ -58,7 +58,7 @@ public class AthleteServiceTest {
         when(athleterepository.save(any(Athlete.class)))
             .thenAnswer(invocation -> invocation.getArgument(0));
         
-        Athlete create = athleteservice.createAthlete(request);
+        Athlete create = athleteservice.createAthlete(request, "user-1");
 
         assertNotNull(create);
         assertEquals(request.cpf(), create.getCpf());
@@ -96,7 +96,7 @@ public class AthleteServiceTest {
 
         AthleteCpfAlreadyExistsException exception = assertThrows(
             AthleteCpfAlreadyExistsException.class,
-            () -> athleteservice.createAthlete(request)
+            () -> athleteservice.createAthlete(request, "athlete-1")
         );
 
         assertEquals("CPF already exists: " + request.cpf(), exception.getMessage());
@@ -131,7 +131,7 @@ public class AthleteServiceTest {
 
         assertThrows(
                 AthleteCpfAlreadyExistsException.class,
-                () -> athleteservice.createAthlete(request)
+                () -> athleteservice.createAthlete(request, "user-1")
         );
     }
 
