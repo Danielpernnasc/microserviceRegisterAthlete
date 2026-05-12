@@ -22,6 +22,9 @@ import com.trainday.bodybuilder.domain.model.Athlete;
 import com.trainday.bodybuilder.domain.model.enums.Gender;
 import com.trainday.bodybuilder.domain.model.enums.GenderIdentity;
 import com.trainday.bodybuilder.domain.repository.AthleteRepository;
+import com.trainday.bodybuilder.infra.Service.JwtService;
+
+import org.springframework.security.core.Authentication;
 
 @ExtendWith(MockitoExtension.class)
 public class AthleteControllerTest {
@@ -34,6 +37,9 @@ public class AthleteControllerTest {
 
     @InjectMocks
     AthleteController athleteController;
+
+    @Mock
+    JwtService jwtService;
 
     @Test
     void shouldSaveAhtlete() {
@@ -49,6 +55,7 @@ public class AthleteControllerTest {
         );
 
         Athlete athlete = new Athlete();
+        athlete.setId("user-1");
         athlete.setCpf("123.456.789-00");
         athlete.setName("Daniel Péricles do Nascimento");
         athlete.setEmail("dpericles6@gmail.com");
@@ -58,21 +65,28 @@ public class AthleteControllerTest {
         athlete.setHeight(182.5);
         athlete.setWeight(105.5);
 
-        when(athleteservice.createAthlete(athleteReq)).thenReturn(athlete);
+        Authentication  authentication = mock(Authentication.class);
 
-        Athlete created = athleteController.save(athleteReq);
+        when(authentication.getName()).thenReturn("user-1");
+     
+        when(athleteservice.createAthlete(athleteReq, "user-1"))
+            .thenReturn(athlete);
+
+
+
+        ResponseEntity<Athlete> created = athleteController.save(athleteReq, authentication);
 
         assertNotNull(created);
-        assertEquals(athleteReq.cpf(), created.getCpf());
-        assertEquals(athleteReq.name(), created.getName());
-        assertEquals(athleteReq.email(), created.getEmail());
-        assertEquals(athleteReq.age(), created.getAge());
-        assertEquals(athleteReq.gender(), created.getGender());
-        assertEquals(athleteReq.identity(), created.getIdentity());
-        assertEquals(athleteReq.height(), created.getHeight());
-        assertEquals(athleteReq.weight(), created.getWeight());
+        assertEquals(athleteReq.cpf(), created.getBody().getCpf());
+        assertEquals(athleteReq.name(), created.getBody().getName());
+        assertEquals(athleteReq.email(), created.getBody().getEmail());
+        assertEquals(athleteReq.age(), created.getBody().getAge());
+        assertEquals(athleteReq.gender(), created.getBody().getGender());
+        assertEquals(athleteReq.identity(), created.getBody().getIdentity());
+        assertEquals(athleteReq.height(), created.getBody().getHeight());
+        assertEquals(athleteReq.weight(), created.getBody().getWeight());
 
-        verify(athleteservice).createAthlete(athleteReq);
+        verify(athleteservice).createAthlete(athleteReq, "user-1");
     }
 
     @Test

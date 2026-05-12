@@ -1,9 +1,9 @@
 package com.trainday.bodybuilder.infra.security;
 
 import java.io.IOException;
-import java.util.List;
+
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.jspecify.annotations.Nullable;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.trainday.bodybuilder.infra.Service.JwtService;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -46,16 +47,22 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
                                     throws ServletException, IOException {
 
+            
             String path = request.getServletPath();
+           
+
 
             if (path.startsWith("/athlete/")) {
+    
                 filterChain.doFilter(request, response);
                 return;
             }
 
             String authHeader = request.getHeader("Authorization");
 
+
             if(authHeader == null || !authHeader.startsWith("Bearer ")){
+       
                 filterChain.doFilter(request, response);
                 return;
             }
@@ -63,21 +70,29 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
 
             String token = authHeader.substring(7);
+           
 
-            if(jwtService.isTokenValid(token)){
+                  boolean validToken = jwtService.isTokenValid(token);
+    
+
+            if(validToken){
                 String email = jwtService.extractEmail(token);
+
                 UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+
 
               UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
                     userDetails,
                     null,
-                    List.of()
+                      userDetails.getAuthorities()
                 );
 
             SecurityContextHolder.getContext().setAuthentication(auth);
+        
             }
-
             filterChain.doFilter(request, response);
+       
+      
 
     }
    

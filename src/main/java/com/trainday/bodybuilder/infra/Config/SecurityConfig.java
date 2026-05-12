@@ -1,4 +1,4 @@
-package com.trainday.bodybuilder.infra.security;
+package com.trainday.bodybuilder.infra.Config;
 
 import static org.springframework.security.web.util.matcher.RegexRequestMatcher.regexMatcher;
 
@@ -16,6 +16,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
+
+import com.trainday.bodybuilder.infra.security.JwtAuthFilter;
 
 @Configuration
 public class SecurityConfig {
@@ -48,6 +50,7 @@ public class SecurityConfig {
                    .requestMatchers(HttpMethod.GET, "/athlete/*").permitAll()
                    .requestMatchers(HttpMethod.GET, "/athlete/cpf/*").permitAll()
                    .requestMatchers(HttpMethod.PATCH, "/athlete/*").permitAll()
+                .requestMatchers(HttpMethod.POST, "/athlete").authenticated()
                     .anyRequest().authenticated()
                 )
                   

@@ -31,13 +31,14 @@ public class AthleteService {
     
     }
 
-    public Athlete createAthlete(AthleteRequest reqAthlete){
+    public Athlete createAthlete(AthleteRequest reqAthlete, String athleteId){
         Login user = loginRepository.findByEmail(reqAthlete.email())
                .orElseThrow(() -> new RuntimeException("User not found: " + reqAthlete.email()));
 
         validateCpfAvailable(reqAthlete.cpf(), null);
          
         Athlete athlete = new Athlete();
+        athlete.setId(athleteId);
         athlete.setCpf(reqAthlete.cpf());
          athlete.setName(reqAthlete.name());
          athlete.setEmail(reqAthlete.email());

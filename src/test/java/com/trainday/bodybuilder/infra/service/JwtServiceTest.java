@@ -1,4 +1,4 @@
-package com.trainday.bodybuilder.infra.security;
+package com.trainday.bodybuilder.infra.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -7,6 +7,8 @@ import java.util.Date;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
+
+import com.trainday.bodybuilder.infra.Service.JwtService;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
