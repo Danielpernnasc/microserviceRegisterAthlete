@@ -21,6 +21,7 @@ import com.trainday.bodybuilder.infra.security.JwtAuthFilter;
 
 @Configuration
 public class SecurityConfig {
+     private static final String ATHLETE_PATH = "/athlete/*";
 
     private final JwtAuthFilter jwtAuthFilter;
 
@@ -40,6 +41,7 @@ public class SecurityConfig {
 
     @Bean
     @Order(2)
+   
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
             return http
                     .csrf(csrf -> csrf.disable()) // Safe: application is stateless and uses JWT tokens in Authorization header (no cookies)
@@ -47,9 +49,11 @@ public class SecurityConfig {
                    .authorizeHttpRequests(auth -> auth
                     .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                     .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
-                   .requestMatchers(HttpMethod.GET, "/athlete/*").permitAll()
+                   .requestMatchers(HttpMethod.GET, ATHLETE_PATH).permitAll()
+                   .requestMatchers(HttpMethod.PUT, ATHLETE_PATH).authenticated()
+                   .requestMatchers(HttpMethod.DELETE, ATHLETE_PATH).authenticated()
+                   .requestMatchers(HttpMethod.PATCH, ATHLETE_PATH).authenticated()
                    .requestMatchers(HttpMethod.GET, "/athlete/cpf/*").permitAll()
-                   .requestMatchers(HttpMethod.PATCH, "/athlete/*").permitAll()
                 .requestMatchers(HttpMethod.POST, "/athlete").authenticated()
                     .anyRequest().authenticated()
                 )
