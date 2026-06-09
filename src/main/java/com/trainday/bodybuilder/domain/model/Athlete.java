@@ -15,7 +15,6 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-
 @Document(collection = "athlete")
 public class Athlete {
 

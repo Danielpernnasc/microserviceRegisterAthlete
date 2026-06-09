@@ -138,7 +138,8 @@ public class JwtAuthFilterTest {
         MockHttpServletRequest request =
                 new MockHttpServletRequest();
 
-        request.setServletPath("/athlete/123");
+            request.setMethod("GET");
+            request.setServletPath("/athlete/123");
 
         MockHttpServletResponse response =
                 new MockHttpServletResponse();
@@ -155,6 +156,64 @@ public class JwtAuthFilterTest {
 
         verifyNoInteractions(jwtService);
     }
+
+    @Test
+    void shouldValidateJwtForPutAthletePath()
+        throws Exception {
+
+    MockHttpServletRequest request =
+            new MockHttpServletRequest();
+
+    request.setMethod("PUT");
+    request.setServletPath("/athlete/123");
+
+    request.addHeader(
+            "Authorization",
+            "Bearer token-valid"
+    );
+
+    MockHttpServletResponse response =
+            new MockHttpServletResponse();
+
+    UserDetails userDetails =
+            mock(UserDetails.class);
+
+    when(jwtService.isTokenValid("token-valid"))
+            .thenReturn(true);
+
+    when(jwtService.extractEmail("token-valid"))
+            .thenReturn("user@host.com");
+
+    when(userDetailsService.loadUserByUsername(
+            "user@host.com"))
+            .thenReturn(userDetails);
+
+    jwtAuthFilter.doFilterInternal(
+            request,
+            response,
+            filterChain
+    );
+
+    verify(jwtService)
+            .isTokenValid("token-valid");
+
+    verify(jwtService)
+            .extractEmail("token-valid");
+
+    verify(userDetailsService)
+            .loadUserByUsername("user@host.com");
+
+    verify(filterChain)
+            .doFilter(request, response);
+
+    assertNotNull(
+            SecurityContextHolder
+                    .getContext()
+                    .getAuthentication()
+    );
+}
+
+
 
 
     
