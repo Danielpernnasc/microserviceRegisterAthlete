@@ -2,6 +2,8 @@ package com.trainday.bodybuilder.application.service;
 
 
 import java.util.Optional;
+
+import com.trainday.bodybuilder.domain.model.enums.Role;
 import org.springframework.stereotype.Service;
 
 import com.mongodb.DuplicateKeyException;
@@ -17,7 +19,9 @@ public class AthleteService {
 
     private final AthleteRepository athleterepository;
     private final LoginRepository loginRepository;
-    private static final String ATHLETE_NOT_FOUND = "Athlete not found with id ";
+    private static final String ATHLETE_NOT_FOUND_ID = "Athlete not found with id! ";
+    private static final String ATHLETE_NOT_FOUND = "Athlete not found! ";
+    private static final String NOT_FOUND_ID_DELETE = "Not found the id for Delete";
 
 
 
@@ -40,14 +44,15 @@ public class AthleteService {
         Athlete athlete = new Athlete();
         athlete.setId(athleteId);
         athlete.setCpf(reqAthlete.cpf());
-         athlete.setName(reqAthlete.name());
-         athlete.setEmail(reqAthlete.email());
+        athlete.setName(reqAthlete.name());
+        athlete.setEmail(reqAthlete.email());
         athlete.setAge(reqAthlete.age());
         athlete.setGender(reqAthlete.gender());
         athlete.setIdentity(reqAthlete.identity());
         athlete.setHeight(reqAthlete.height());
         athlete.setWeight(reqAthlete.weight());
         athlete.setUserId(user.getId());
+        athlete.setRole(Role.ATHLETE);
 
         try {
             return athleterepository.save(athlete);
@@ -75,12 +80,12 @@ public class AthleteService {
 
     public Athlete findbyCpf(String cpf){
         return athleterepository.findByCpf(cpf)
-                .orElseThrow(() -> new RuntimeException(ATHLETE_NOT_FOUND + cpf));
+                .orElseThrow(() -> new RuntimeException(ATHLETE_NOT_FOUND_ID + cpf));
     }
 
 	 public Athlete updateAthlete(String id,  AthleteRequest updateAthlete){
            Athlete existAthlete = athleterepository.findById(id)
-        .orElseThrow(() -> new RuntimeException(ATHLETE_NOT_FOUND));
+        .orElseThrow(() -> new RuntimeException(ATHLETE_NOT_FOUND_ID));
 
             Optional.ofNullable(updateAthlete.cpf())
                 .ifPresent(cpf -> {
@@ -109,6 +114,8 @@ public class AthleteService {
                 .ifPresent(existAthlete::setWeight);
 
 
+
+
                 try {
                     return athleterepository.save(existAthlete);
                 } catch (DuplicateKeyException e) {
@@ -118,7 +125,7 @@ public class AthleteService {
 
      public Athlete pathAthlete(String id, AthleteRequest req){
             Athlete athlete = athleterepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Athlete not found"));
+                .orElseThrow(() -> new RuntimeException(ATHLETE_NOT_FOUND));
 
                 if(req.cpf() != null){
                     athlete.setCpf(req.cpf());
@@ -157,7 +164,7 @@ public class AthleteService {
     public void deleteAthlete(String id) {
 
       Athlete athlete = athleterepository.findById(id)
-        .orElseThrow(() -> new RuntimeException("Not found the id for Delete"));
+        .orElseThrow(() -> new RuntimeException(NOT_FOUND_ID_DELETE));
          String userId = athlete.getUserId();
 
         athleterepository.deleteById(id);   // 👈 primeiro

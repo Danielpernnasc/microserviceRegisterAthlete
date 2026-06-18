@@ -6,6 +6,7 @@ import static org.mockito.Mockito.*;
 
 import java.util.Optional;
 
+import com.trainday.bodybuilder.domain.model.enums.Role;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -48,6 +49,7 @@ public class AthleteServiceTest {
             GenderIdentity.CISGENDER,
             1.68,
             62.0
+
         );
         Login login = new Login();
         login.setId("user-1");
@@ -81,6 +83,7 @@ public class AthleteServiceTest {
             GenderIdentity.CISGENDER,
             1.68,
             62.0
+
         );
         Login login = new Login();
         login.setId("user-1");
@@ -147,7 +150,8 @@ public class AthleteServiceTest {
             GenderIdentity.CISGENDER,
             1.68,
             62.0,
-            "user-1"
+            "user-1",
+                  Role.ATHLETE
         );
 
     when(athleterepository.findById("1"))
@@ -166,6 +170,7 @@ public class AthleteServiceTest {
         assertEquals(athlete.getIdentity(), state.identity());
         assertEquals(athlete.getHeight(), state.height());
         assertEquals(athlete.getWeight(), state.weight());
+
     }
 
     @Test 
@@ -180,7 +185,8 @@ public class AthleteServiceTest {
             GenderIdentity.CISGENDER,
             1.68,
             62.0,
-            "user-1"
+            "user-1",
+                      Role.ATHLETE
         );
         when(athleterepository.findByCpf("12345678900"))
             .thenReturn(Optional.of(athlete));
@@ -258,7 +264,7 @@ public class AthleteServiceTest {
             existAthlete.setIdentity(GenderIdentity.CISGENDER);
             existAthlete.setHeight(181.90);
             existAthlete.setWeight(181.90);
-
+            existAthlete.setRole(Role.ATHLETE);
             Athlete patchAthlete = new Athlete();
             patchAthlete.setGender(Gender.MALE);
             patchAthlete.setWeight(107.5);
@@ -289,6 +295,7 @@ public class AthleteServiceTest {
            assertEquals(GenderIdentity.CISGENDER, result.getIdentity());
            assertEquals(181.90, result.getHeight());
            assertEquals(107.50, result.getWeight());
+           assertEquals(Role.ATHLETE, result.getRole());
 
     }
 

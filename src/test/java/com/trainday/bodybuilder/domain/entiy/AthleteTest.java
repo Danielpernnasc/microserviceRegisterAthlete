@@ -2,6 +2,7 @@ package com.trainday.bodybuilder.domain.entiy;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.trainday.bodybuilder.domain.model.enums.Role;
 import org.junit.jupiter.api.Test;
 
 import com.trainday.bodybuilder.domain.model.Athlete;
@@ -23,7 +24,8 @@ public class AthleteTest {
             GenderIdentity.CISGENDER,
             1.82,
             105.40,
-            "user-1"
+            "user-1",
+                Role.ATHLETE
         );
 
 

@@ -4,6 +4,7 @@ package com.trainday.bodybuilder.application.service;
 
 import java.util.Optional;
 
+import com.trainday.bodybuilder.domain.model.enums.Role;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -27,6 +28,7 @@ public class LoginService {
     private final JwtService jwtservice;
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
+
 
     public LoginService(
         LoginRepository loginRepository,
@@ -52,38 +54,51 @@ public class LoginService {
           saved.getId(),
           saved.getEmail()
         );
+
         
     }
 
 
    public String authenticate(LoginRequest request) {
+
+
     try {
+
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
                 request.email(),
                 request.password()
             )
         );
+
     } catch (BadCredentialsException ex) {
+
         throw new BadCredentialsException("Invalid email or password");
     }
+
+
 
     Login user = loginRepository.findByEmail(request.email())
             .orElseThrow(() ->
                 new UsernameNotFoundException("User not found")
             );
 
-    Optional<Athlete> athleteOpt =
-            athleteRepository.findByUserId(user.getId());
+    Optional<Athlete> athletOpt = athleteRepository.findByUserId(user.getId());
 
-    String athlete = athleteOpt
+    String athleteId = athletOpt
             .map(Athlete::getId)
             .orElse(null);
+    Role role = athletOpt
+            .map(Athlete::getRole)
+            .orElse(Role.ATHLETE);
+
+
 
     return jwtservice.generateToken(
             user.getEmail(),
             user.getId(),
-            athlete
+            athleteId,
+            role
     );
 }
 
