@@ -2,6 +2,7 @@ package com.trainday.bodybuilder.api.DTO.request;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.trainday.bodybuilder.domain.model.enums.Role;
 import org.junit.jupiter.api.Test;
 
 import com.trainday.bodybuilder.domain.model.enums.Gender;
@@ -21,6 +22,7 @@ public class AthleteRequestTest {
             GenderIdentity.CISGENDER,
             182.5,
             105.5
+
         );
         assertEquals("999.999.999-99", athleteRequest.cpf());
         assertEquals("Daniel Péricles do Nascimento", athleteRequest.name());
@@ -30,6 +32,7 @@ public class AthleteRequestTest {
         assertEquals(GenderIdentity.CISGENDER, athleteRequest.identity());
         assertEquals(182.5, athleteRequest.height());
         assertEquals(105.5, athleteRequest.weight());
+
 
         
     }

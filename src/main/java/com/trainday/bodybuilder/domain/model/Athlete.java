@@ -1,5 +1,6 @@
 package com.trainday.bodybuilder.domain.model;
 
+import com.trainday.bodybuilder.domain.model.enums.Role;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -30,6 +31,7 @@ public class Athlete {
     private Double height;
     private Double weight;
     private String userId;
+    private Role role;
 
    
 

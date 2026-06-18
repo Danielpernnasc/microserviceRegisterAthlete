@@ -6,6 +6,7 @@ import static org.mockito.Mockito.*;
 
 import java.util.Optional;
 
+import com.trainday.bodybuilder.domain.model.enums.Role;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -91,7 +92,8 @@ public class LoginServiceTest {
         when(jwtservice.generateToken(
                 "teste@gmail.com",
                 "user123",
-                "athlete123"))
+                "athlete123",
+                Role.ATHLETE))
             .thenReturn("token_fake");
 
         String token = loginservice.authenticate(

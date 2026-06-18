@@ -34,15 +34,12 @@ public class AthleteController {
    
     private final AthleteService service;
 
-    private static final Logger log = LoggerFactory.getLogger(AthleteService.class);
-    private final JwtService jwtService;
 
     public AthleteController(
         AthleteService service,
         JwtService jwtService
     ){
         this.service = service;
-        this.jwtService = jwtService;
     }
 
 

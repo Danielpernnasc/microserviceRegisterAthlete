@@ -1,5 +1,6 @@
 package com.trainday.bodybuilder.infra.Service;
 
+import com.trainday.bodybuilder.domain.model.enums.Role;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,11 +33,15 @@ public class JwtService{
     public String generateToken(
             String email,
             String userId,
-            String athleteId) {
+            String athleteId,
+            Role role) {
 
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", userId);
         claims.put("athleteId", athleteId);
+        claims.put("role", role.name());
+
+
 
         return Jwts.builder()
                 .setClaims(claims)
@@ -63,6 +68,7 @@ public class JwtService{
             Jwts.parserBuilder().setSigningKey(getKey()).build().parseClaimsJws(token);
             return true;
         }catch (JwtException e){
+            e.printStackTrace();
             return false;
         }
     }

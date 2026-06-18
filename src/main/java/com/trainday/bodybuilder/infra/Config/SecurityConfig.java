@@ -22,10 +22,17 @@ import com.trainday.bodybuilder.infra.security.JwtAuthFilter;
 @Configuration
 public class SecurityConfig {
      private static final String ATHLETE_PATH = "/athlete/*";
+     private static final String ATHLETE = "/athlete";
+     private static final String ATHLETE_PATCH_CPF = "/athlete/**";
+     private static final String AUTH = "/auth/*";
+     private static final String HEALTYHISTORY = "/HealtyHistory";
+     private static final String HEALTYHISTORY_PATH = "/HealtyHistory/**";
+
 
     private final JwtAuthFilter jwtAuthFilter;
 
     public SecurityConfig(JwtAuthFilter jwtAuthFilter){
+
         this.jwtAuthFilter = jwtAuthFilter;
     }
 
@@ -41,32 +48,33 @@ public class SecurityConfig {
 
     @Bean
     @Order(2)
-   
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
             return http
                     .csrf(csrf -> csrf.disable()) // Safe: application is stateless and uses JWT tokens in Authorization header (no cookies)
                     .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                    .authorizeHttpRequests(auth -> auth
-                    .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                    .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
-                   .requestMatchers(HttpMethod.GET, ATHLETE_PATH).permitAll()
+                           .requestMatchers(HttpMethod.POST,  HEALTYHISTORY ).permitAll()
+                           .requestMatchers(HttpMethod.GET, HEALTYHISTORY_PATH).authenticated()
+                           .requestMatchers(HttpMethod.PUT, HEALTYHISTORY_PATH).authenticated()
+                           .requestMatchers(HttpMethod.PATCH, HEALTYHISTORY_PATH).authenticated()
+                    .requestMatchers(HttpMethod.POST, AUTH).permitAll()
+                    .requestMatchers(HttpMethod.POST, AUTH).permitAll()
+                   .requestMatchers(HttpMethod.GET, ATHLETE_PATH).authenticated()
                    .requestMatchers(HttpMethod.PUT, ATHLETE_PATH).authenticated()
                    .requestMatchers(HttpMethod.DELETE, ATHLETE_PATH).authenticated()
                    .requestMatchers(HttpMethod.PATCH, ATHLETE_PATH).authenticated()
-                   .requestMatchers(HttpMethod.GET, "/athlete/cpf/*").permitAll()
-                .requestMatchers(HttpMethod.POST, "/athlete").authenticated()
+                   .requestMatchers(HttpMethod.GET, ATHLETE_PATCH_CPF).permitAll()
+                   .requestMatchers(HttpMethod.POST, ATHLETE).authenticated()
+
+
                     .anyRequest().authenticated()
                 )
-                  
+
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
 
-    }
+  }
 
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return web -> web.ignoring().requestMatchers(swaggerRequestMatcher());
-    }
 
     private OrRequestMatcher swaggerRequestMatcher() {
         return new OrRequestMatcher(

@@ -7,6 +7,7 @@ import static org.mockito.Mockito.*;
 
 import java.util.Optional;
 
+import com.trainday.bodybuilder.domain.model.enums.Role;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -65,6 +66,7 @@ public class AthleteControllerTest {
         athlete.setHeight(182.5);
         athlete.setWeight(105.5);
 
+
         Authentication  authentication = mock(Authentication.class);
 
         when(authentication.getName()).thenReturn("user-1");
@@ -86,6 +88,7 @@ public class AthleteControllerTest {
         assertEquals(athleteReq.height(), created.getBody().getHeight());
         assertEquals(athleteReq.weight(), created.getBody().getWeight());
 
+
         verify(athleteservice).createAthlete(athleteReq, "user-1");
     }
 
@@ -100,7 +103,8 @@ public class AthleteControllerTest {
             Gender.MALE,
             GenderIdentity.CISGENDER,
             182.5,
-            105.5
+                105.5
+
         );
 
         when(athleteservice.getAthleteById("1"))
@@ -227,6 +231,7 @@ public class AthleteControllerTest {
         assertEquals(182.5, body.height());
         assertEquals(105.5, body.weight());
 
+
         verify(athleteservice).findbyCpf("123.456.789-00");
 
     }
@@ -245,7 +250,9 @@ public class AthleteControllerTest {
             existAthlete.setEmail("dpericles6@gmail.com");
             existAthlete.setHeight(181.90);
             existAthlete.setWeight(105.10);
+            existAthlete.setRole(Role.ATHLETE);
             existAthlete.setUserId("user-1");
+
     
 
           doNothing().when(athleteservice).deleteAthlete("1");

@@ -11,16 +11,14 @@ public class GenderTest {
     @Test
     void shouldReturnGender_whenValidValue(){
         Gender result = Gender.forValue("Homem");
+        Gender result2 = Gender.forValue("Mulher");
 
         assertEquals(Gender.MALE, result);
+        assertEquals(Gender.FEMALE, result2);
+
     }
 
-    @Test
-    void shouldIgnoreCase_whenValidValue(){
-        Gender result = Gender.forValue("Mulher");
 
-        assertEquals(Gender.FEMALE, result);
-    }
 
     @Test
     void shouldThrowException_whenInvalidValue(){
