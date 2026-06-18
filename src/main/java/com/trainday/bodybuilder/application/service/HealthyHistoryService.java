@@ -2,8 +2,8 @@ package com.trainday.bodybuilder.application.service;
 
 import com.mongodb.DuplicateKeyException;
 
-import com.trainday.bodybuilder.api.DTO.request.HealtyHistoryRequest;
-import com.trainday.bodybuilder.api.DTO.request.HealtyHistoryUpdatePatchRequest;
+import com.trainday.bodybuilder.api.DTO.request.HealthyHistoryRequest;
+import com.trainday.bodybuilder.api.DTO.request.HealthyHistoryUpdatePatchRequest;
 import com.trainday.bodybuilder.domain.model.Athlete;
 import com.trainday.bodybuilder.domain.model.HealthyHistory;
 
@@ -36,7 +36,7 @@ public class HealthyHistoryService {
 
 
     public HealthyHistory createPacient(
-            HealtyHistoryRequest hhrequest
+            HealthyHistoryRequest hhrequest
     ) {
 
         Athlete athlete = athleteRepository.findByCpf(
@@ -73,13 +73,13 @@ public class HealthyHistoryService {
 
     }
 
-    public HealthyHistory findByAthleteCPF(String athleteCpf) {
+    public HealthyHistory findByHHCPF(String athleteCpf) {
         return hhrepository.findByAthleteCpf(athleteCpf)
                 .orElseThrow(() ->
                         new RuntimeException(HEALTY_HISTORY));
     }
 
-    public HealthyHistory updateHH(String athleteCpf, HealtyHistoryUpdatePatchRequest updateHH)  {
+    public HealthyHistory updateHH(String athleteCpf, HealthyHistoryUpdatePatchRequest updateHH)  {
         HealthyHistory existHH = hhrepository.findByAthleteCpf(athleteCpf)
                 .orElseThrow(() -> new RuntimeException(HEALTY_HISTORY));
 
@@ -122,7 +122,7 @@ public class HealthyHistoryService {
 
     }
 
-    public HealthyHistory pathHH(String athleteCpf, HealtyHistoryUpdatePatchRequest req){
+    public HealthyHistory pathHH(String athleteCpf, HealthyHistoryUpdatePatchRequest req){
         HealthyHistory hh = hhrepository.findByAthleteCpf(athleteCpf)
                 .orElseThrow(() -> new RuntimeException(HEALTY_HISTORY));
 

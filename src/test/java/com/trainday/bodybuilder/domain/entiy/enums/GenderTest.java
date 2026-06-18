@@ -18,10 +18,7 @@ public class GenderTest {
 
     }
 
-    @Test
-    void shouldIgnoreCase_whenValidValue(){
 
-    }
 
     @Test
     void shouldThrowException_whenInvalidValue(){

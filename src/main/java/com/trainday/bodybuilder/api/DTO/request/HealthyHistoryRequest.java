@@ -7,7 +7,7 @@ import lombok.Builder;
 import java.util.List;
 
 @Builder
-public record HealtyHistoryRequest(
+public record HealthyHistoryRequest(
         String athleteCpf,
         Boolean smoker,
         Alcoholic alcoholic,
