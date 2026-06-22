@@ -6,10 +6,11 @@ import com.trainday.bodybuilder.application.service.HealthyHistoryService;
 import com.trainday.bodybuilder.domain.model.HealthyHistory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/HealtyHistory")
+@RequestMapping("/HealthyHistory")
 public class HealthyHistoryController {
 
     private final HealthyHistoryService hhservice;
@@ -20,9 +21,11 @@ public class HealthyHistoryController {
 
    @PostMapping
     public ResponseEntity<HealthyHistory> save(
-           @RequestBody HealthyHistoryRequest request
+           @RequestBody HealthyHistoryRequest request,
+           Authentication authentication
            ){
-       HealthyHistory createHH = hhservice.createPacient(request);
+       String athleteId = authentication.getName();
+       HealthyHistory createHH = hhservice.createPacient(request, athleteId);
        return ResponseEntity.status(HttpStatus.CREATED)
                .body(createHH);
    }

@@ -2,8 +2,10 @@ package com.trainday.bodybuilder.application.service;
 
 import com.trainday.bodybuilder.api.DTO.request.HealthyHistoryRequest;
 import com.trainday.bodybuilder.api.DTO.request.HealthyHistoryUpdatePatchRequest;
+import com.trainday.bodybuilder.api.DTO.request.RegisterRequest;
 import com.trainday.bodybuilder.domain.model.Athlete;
 import com.trainday.bodybuilder.domain.model.HealthyHistory;
+import com.trainday.bodybuilder.domain.model.Login;
 import com.trainday.bodybuilder.domain.model.enums.Alcoholic;
 import com.trainday.bodybuilder.domain.model.enums.DiseaseType;
 import com.trainday.bodybuilder.domain.repository.AthleteRepository;
@@ -15,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import com.mongodb.DuplicateKeyException;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,8 +40,15 @@ public class HealthyHistoryServiceTest {
 
     @Test
     void shouldCreateHH(){
-        HealthyHistoryRequest hhrequest = new HealthyHistoryRequest(
+        RegisterRequest registerRequest = new RegisterRequest(
                 "999.999.999-99",
+                LocalDate.of(1980, 01, 01),
+                "athlete@host.com",
+                "******"
+
+
+        );
+        HealthyHistoryRequest hhrequest = new HealthyHistoryRequest(
                 false,
                 Alcoholic.DOESNT_DRINK,
                 true,
@@ -50,20 +60,21 @@ public class HealthyHistoryServiceTest {
                 null,
                 "Hipertensão por parte de pai e mãe"
         );
+        Login login = new Login();
+        login.setCpf(registerRequest.cpf());
 
         Athlete athlete = new Athlete();
         athlete.setCpf("999.999.999-99");
 
-        when(athleteRepository.findByCpf(hhrequest.athleteCpf()))
+        when(athleteRepository.findByCpf(registerRequest.cpf()))
                 .thenReturn(Optional.of(athlete));
 
         when(hhRepository.save(any(HealthyHistory.class)))
                 .thenAnswer(invocation -> (HealthyHistory) invocation.getArgument(0));
 
-        HealthyHistory create = hhService.createPacient(hhrequest);
+        HealthyHistory create = hhService.createPacient(hhrequest, "999.999.999-99");
 
         assertNotNull(create);
-        assertEquals(hhrequest.athleteCpf(), create.getAthleteCpf());
         assertEquals(hhrequest.alcoholic(), create.getAlcoholic());
         assertEquals(hhrequest.physicallyActive(), create.getPhysicallyActive());
         assertEquals(hhrequest.diseases(), create.getDisease());
@@ -78,8 +89,15 @@ public class HealthyHistoryServiceTest {
 
     @Test
     void shouldThrowConflictWhenHHAlreadyExist(){
-        HealthyHistoryRequest hhrequest = new HealthyHistoryRequest(
+        RegisterRequest registerRequest = new RegisterRequest(
                 "999.999.999-99",
+                LocalDate.of(1980, 01, 01),
+                "athlete@host.com",
+                "******"
+
+
+        );
+        HealthyHistoryRequest hhrequest = new HealthyHistoryRequest(
                 false,
                 Alcoholic.DOESNT_DRINK,
                 true,
@@ -97,7 +115,7 @@ public class HealthyHistoryServiceTest {
 
 
 
-        when(athleteRepository.findByCpf(hhrequest.athleteCpf()))
+        when(athleteRepository.findByCpf(registerRequest.cpf()))
                 .thenReturn(Optional.of(athlete));
 
        DuplicateKeyException duplicateKeyException = mock(DuplicateKeyException.class);
@@ -108,7 +126,7 @@ public class HealthyHistoryServiceTest {
 
         AthleteCpfAlreadyExistsException exception = assertThrows(
                 AthleteCpfAlreadyExistsException.class,
-                () -> hhService.createPacient(hhrequest)
+                () -> hhService.createPacient(hhrequest, "999.999.999-99")
         );
 
         assertEquals(   "CPF already exists: 999.999.999-99", exception.getMessage());
@@ -118,7 +136,6 @@ public class HealthyHistoryServiceTest {
     @Test
     void shouldThrowWhenAthleteNotFound() {
         HealthyHistoryRequest hhrequest = new HealthyHistoryRequest(
-                "999.999.999-99",
                 false,
                 Alcoholic.DOESNT_DRINK,
                 true,
@@ -136,7 +153,7 @@ public class HealthyHistoryServiceTest {
 
         RuntimeException exception = assertThrows(
                 RuntimeException.class,
-                () -> hhService.createPacient(hhrequest)
+                () -> hhService.createPacient(hhrequest, "999.999.999-99")
         );
 
         assertEquals("Athlete not found!", exception.getMessage());

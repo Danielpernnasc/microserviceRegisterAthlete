@@ -36,13 +36,12 @@ public class HealthyHistoryService {
 
 
     public HealthyHistory createPacient(
-            HealthyHistoryRequest hhrequest
+            HealthyHistoryRequest hhrequest, String cpf
     ) {
 
-        Athlete athlete = athleteRepository.findByCpf(
-                        hhrequest.athleteCpf())
-                .orElseThrow(() ->
-                        new RuntimeException(ATHLETE_NOT_FOUND));
+        Athlete athlete = athleteRepository.findByCpf(cpf)
+                .orElseThrow(() -> new RuntimeException(ATHLETE_NOT_FOUND));
+
 
         HealthyHistory hh = new HealthyHistory();
 
@@ -67,7 +66,7 @@ public class HealthyHistoryService {
             return hhrepository.save(hh);
 
         } catch (DuplicateKeyException e) {
-            throw new AthleteCpfAlreadyExistsException(hhrequest.athleteCpf());
+            throw new AthleteCpfAlreadyExistsException(cpf);
         }
 
 
