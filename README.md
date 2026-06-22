@@ -1,61 +1,138 @@
 # 🏋️ Microservice Register Athlete
 
-API REST para cadastro e autenticação de atletas, construída com Java 11 + Spring Boot + JWT.
+API REST para **cadastro, autenticação e gerenciamento de atletas**, parte da plataforma **TrainDay** — um ecossistema de microserviços para acompanhamento de treino e saúde de atletas.
 
 ---
 
 ## 📋 Índice
 
-- [Tecnologias](#tecnologias)
-- [Rodando localmente](#rodando-localmente)
-- [Docker](#docker)
-- [Kubernetes com Minikube](#kubernetes-com-minikube)
-- [SonarQube](#sonarqube)
-- [Endpoints](#endpoints)
+- [Sobre a Plataforma TrainDay](#-sobre-a-plataforma-trainday)
+- [Sobre este Serviço](#-sobre-este-serviço)
+- [Tecnologias](#-tecnologias)
+- [Arquitetura](#-arquitetura)
+- [Rodando localmente](#-rodando-localmente)
+- [Docker](#-docker)
+- [Kubernetes com Minikube](#-kubernetes-com-minikube)
+- [SonarQube](#-sonarqube)
+- [Observabilidade](#-observabilidade)
+- [Endpoints](#-endpoints)
+- [Integração com Healthy History](#-integração-com-healthy-history)
 
 ---
 
-## Tecnologias
+## 🌐 Sobre a Plataforma TrainDay
 
-- Java 11
-- Spring Boot
-- Spring Security + JWT
-- Maven
-- Docker
-- Kubernetes (Minikube)
-- SonarQube
+O **TrainDay** é uma plataforma CRM para atletas e bodybuilders, composta por três microserviços independentes que se comunicam via JWT compartilhado:
+
+| Serviço | Porta | Responsabilidade |
+|---|---|---|
+| **microserviceRegisterAthlete** *(este)* | `8080` | Cadastro e autenticação de atletas |
+| **microserviceRegisterTrain** | `8081` | Registro e gerenciamento de treinos |
+| **microserviceTrainHealth** *(Healthy History)* | `8082` | Histórico de saúde, bioimpedância e avaliações clínicas |
 
 ---
 
-## Rodando localmente
+## 🎯 Sobre este Serviço
+
+O **microserviceRegisterAthlete** é o ponto de entrada do ecossistema TrainDay. Ele é responsável por:
+
+- Registro e autenticação de atletas com JWT
+- Gerenciamento de perfil do atleta
+- Emissão de tokens Bearer utilizados pelos demais serviços da plataforma
+- Geração do `AthleteSnapshot` — estrutura imutável de dados do atleta consumida pelos serviços de treino e saúde
+
+---
+
+## 🛠 Tecnologias
+
+- **Java 21**
+- **Spring Boot 3.3.5**
+- **Spring Security + JWT** (`jjwt 0.12`)
+- **MongoDB Atlas** (banco de dados em nuvem)
+- **Lombok** — redução de boilerplate
+- **OpenAPI 3 / Swagger UI**
+- **Spring Actuator + Micrometer + Prometheus + Grafana**
+- **JaCoCo** — cobertura de testes
+- **SonarQube** — qualidade de código
+- **Docker / Docker Compose**
+- **Kubernetes (Minikube)**
+- **GitHub Actions** — CI/CD
+
+---
+
+## 🏛 Arquitetura
+
+O serviço segue o padrão **Hexagonal (Ports & Adapters)**, garantindo isolamento total entre domínio, aplicação e infraestrutura.
+
+[![Arquitetura Hexagonal](docs/arquitetura_hexagonal_register_athlete.svg)](docs/arquitetura_hexagonal_register_athlete.svg)
+
+[![Arquitetura em Camadas](docs/arquitetura_camadas_register_athlete.svg)](docs/arquitetura_camadas_register_athlete.svg)
+
+### Estrutura de pacotes
+
+```
+src/main/java/com/trainday/registerathlete/
+├── domain/
+│   ├── model/          # Athlete, AuthToken
+│   └── port/
+│       ├── in/         # AthleteUseCase, AuthUseCase
+│       └── out/        # AthleteRepositoryPort, TokenProviderPort
+├── application/
+│   └── service/        # AthleteService, AuthService
+├── adapter/
+│   ├── in/
+│   │   └── rest/       # AthleteController, AuthController
+│   └── out/
+│       ├── persistence/ # AthleteMongoRepository
+│       └── security/    # JwtTokenProviderImpl
+└── config/             # SecurityConfig, OpenApiConfig, ObservabilityConfig
+```
+
+---
+
+## 🚀 Rodando localmente
+
+### Pré-requisitos
+
+- Java 21
+- Maven 3.9+
+- Variáveis de ambiente configuradas (`.env` ou export):
+
+```bash
+export MONGODB_URI=mongodb+srv://<user>:<password>@cluster.mongodb.net/trainday
+export JWT_SECRET=sua-chave-secreta-com-minimo-64-caracteres
+export JWT_EXPIRATION=3600000
+```
+
+### Executar
 
 ```bash
 # Clone o repositório
-git clone https://github.com/Danielpernnasc/microsserviceRegisterAthlete.git
-cd microsserviceRegisterAthlete
-git checkout finalizacao
+git clone https://github.com/Danielpernnasc/microserviceRegisterAthlete.git
+cd microserviceRegisterAthlete
 
 # Build e execução
 ./mvnw spring-boot:run
 ```
 
-A API estará disponível em `http://localhost:8080`
+A API estará disponível em `http://localhost:8080`  
+Swagger UI: `http://localhost:8080/swagger-ui.html`
 
 ---
 
-## Docker
+## 🐳 Docker
 
 ### Dockerfile
 
-Crie um `Dockerfile` na raiz do projeto:
+O projeto inclui um `Dockerfile` multi-stage na raiz:
 
 ```dockerfile
-FROM eclipse-temurin:11-jdk-alpine AS build
+FROM eclipse-temurin:21-jdk-alpine AS build
 WORKDIR /app
 COPY . .
 RUN ./mvnw clean package -DskipTests
 
-FROM eclipse-temurin:11-jre-alpine
+FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 EXPOSE 8080
@@ -70,48 +147,33 @@ docker build -t register-athlete:latest .
 
 # Rodar o container
 docker run -p 8080:8080 \
-  -e JWT_SECRET=sua-chave-secreta-super-segura \
+  -e MONGODB_URI=mongodb+srv://... \
+  -e JWT_SECRET=sua-chave-secreta-com-minimo-64-caracteres \
   -e JWT_EXPIRATION=3600000 \
   register-athlete:latest
-
-# Ver containers rodando
-docker ps
 
 # Ver logs
 docker logs <container_id>
 
-# Parar o container
+# Parar
 docker stop <container_id>
 ```
 
-### Docker Compose (opcional)
-
-```yaml
-# docker-compose.yml
-version: '3.8'
-
-services:
-  app:
-    build: .
-    ports:
-      - "8080:8080"
-    environment:
-      - JWT_SECRET=${JWT_SECRET}
-      - JWT_EXPIRATION=3600000
-    restart: unless-stopped
-```
+### Docker Compose
 
 ```bash
-# Subir com docker-compose
+# Subir toda a stack TrainDay
 docker-compose up -d
 
 # Parar
 docker-compose down
 ```
 
+O `docker-compose.yaml` sobe o `microserviceRegisterAthlete` junto com Prometheus e Grafana para observabilidade local.
+
 ---
 
-## Kubernetes com Minikube
+## ☸️ Kubernetes com Minikube
 
 ### Pré-requisitos
 
@@ -133,7 +195,7 @@ minikube start
 
 ### Manifests Kubernetes
 
-Crie a pasta `k8s/` na raiz do projeto:
+Estrutura `k8s/` na raiz:
 
 ```
 k8s/
@@ -142,7 +204,7 @@ k8s/
 └── service.yaml
 ```
 
-**k8s/secret.yaml** — credenciais sensíveis (nunca commite com valores reais)
+**k8s/secret.yaml**
 
 ```yaml
 apiVersion: v1
@@ -151,7 +213,8 @@ metadata:
   name: athlete-secrets
 type: Opaque
 stringData:
-  JWT_SECRET: sua-chave-secreta-super-segura
+  MONGODB_URI: "mongodb+srv://..."
+  JWT_SECRET: "sua-chave-secreta-com-minimo-64-caracteres"
   JWT_EXPIRATION: "3600000"
 ```
 
@@ -177,7 +240,7 @@ spec:
       containers:
         - name: register-athlete
           image: register-athlete:latest
-          imagePullPolicy: Never        # usa imagem local do Minikube
+          imagePullPolicy: Never
           ports:
             - containerPort: 8080
           envFrom:
@@ -228,14 +291,14 @@ kubectl apply -f k8s/secret.yaml
 kubectl apply -f k8s/deployment.yaml
 kubectl apply -f k8s/service.yaml
 
-# Verificar se subiu
+# Verificar status
 kubectl get pods
 kubectl get services
 
 # Acessar a aplicação
 minikube service register-athlete-service --url
 
-# Ver logs do pod
+# Ver logs
 kubectl logs -f deployment/register-athlete
 
 # Deletar tudo
@@ -244,7 +307,7 @@ kubectl delete -f k8s/
 
 ---
 
-## SonarQube
+## 📊 SonarQube
 
 ### Subir o SonarQube com Docker
 
@@ -255,9 +318,7 @@ docker run -d \
   sonarqube:lts-community
 ```
 
-Acesse `http://localhost:9000`
-- Login padrão: `admin` / `admin`
-- Crie um projeto manualmente e gere um **token de autenticação**
+Acesse `http://localhost:9000` → login padrão: `admin` / `admin`
 
 ### Configurar no `pom.xml`
 
@@ -284,43 +345,86 @@ Acesse `http://localhost:9000`
   -Dsonar.token=SEU_TOKEN_AQUI
 ```
 
-Após rodar, acesse `http://localhost:9000/projects` para ver o relatório de:
-- Cobertura de testes
-- Code smells
-- Bugs e vulnerabilidades
-- Duplicação de código
+---
+
+## 📡 Observabilidade
+
+O serviço expõe métricas via **Spring Actuator + Micrometer**, coletadas pelo **Prometheus** e visualizadas no **Grafana**.
+
+```bash
+# Health check
+GET http://localhost:8080/actuator/health
+
+# Métricas Prometheus
+GET http://localhost:8080/actuator/prometheus
+```
+
+Para subir a stack de observabilidade completa:
+
+```bash
+docker-compose -f docker-compose-observability.yml up -d
+```
+
+- **Prometheus**: `http://localhost:9090`
+- **Grafana**: `http://localhost:3000` (admin/admin)
 
 ---
 
-## Endpoints
+## 🔌 Endpoints
 
-| Método | Rota              | Autenticação | Descrição              |
-|--------|-------------------|--------------|------------------------|
-| POST   | /auth/register    | Pública      | Cadastro de atleta     |
-| POST   | /auth/login       | Pública      | Login e geração de JWT |
-| GET    | /athlete/*        | Pública      | Dados do atleta        |
-| *      | demais rotas      | Bearer Token | Requer JWT válido      |
+| Método | Rota | Autenticação | Descrição |
+|--------|------|--------------|-----------|
+| `POST` | `/auth/register` | Pública | Cadastro de novo atleta |
+| `POST` | `/auth/login` | Pública | Login e geração de JWT |
+| `GET` | `/athlete/{id}` | Bearer Token | Dados do atleta por ID |
+| `GET` | `/athlete/me` | Bearer Token | Dados do atleta autenticado |
+| `PUT` | `/athlete/{id}` | Bearer Token | Atualiza perfil do atleta |
+| `DELETE` | `/athlete/{id}` | Bearer Token | Remove atleta |
+| `GET` | `/actuator/health` | Pública | Health check |
+| `GET` | `/actuator/prometheus` | Pública | Métricas |
 
 ### Exemplo de autenticação
 
 ```bash
+# Registro
+curl -X POST http://localhost:8080/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Daniel Pericles",
+    "email": "daniel@trainday.com",
+    "password": "senha123"
+  }'
+
 # Login
 curl -X POST http://localhost:8080/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"email": "daniel@host.com", "password": "senha123"}'
+  -d '{"email": "daniel@trainday.com", "password": "senha123"}'
 
-# Usar o token retornado nas rotas protegidas
-curl http://localhost:8080/rota-protegida \
+# Usar o token JWT nas rotas protegidas
+curl http://localhost:8080/athlete/me \
   -H "Authorization: Bearer SEU_TOKEN_JWT"
 ```
 
 ---
 
-![Arquitetura Hexagonal](./docs/arquitetura_camadas_register_athlete.svg)
-![Arquitetura Hexagonal](./docs/arquitetura_hexagonal_register_athlete.svg)
+## 🩺 Integração com Healthy History
 
+O **microserviceTrainHealth** (porta `8082`) consome dados deste serviço via **AthleteSnapshot** — um objeto imutável com os dados do atleta no momento do registro de saúde, garantindo consistência histórica mesmo que o perfil seja alterado posteriormente.
 
-## Autor
+O token JWT emitido por este serviço é validado diretamente pelo `microserviceTrainHealth`, sem necessidade de chamadas inter-serviço para autenticação, desde que ambos compartilhem o mesmo `JWT_SECRET` e `JWT_ISSUER`.
 
-**Daniel Pericles**
-[github.com/Danielpernnasc](https://github.com/Danielpernnasc)
+```
+RegisterAthlete (8080) ──JWT──► HealthyHistory (8082)
+                                  ├── Bioimpedância
+                                  ├── Análise Clínica
+                                  ├── Consulta Nutricionista
+                                  └── Snapshot do Atleta
+```
+
+---
+
+## 👤 Autor
+
+**Daniel Pericles**  
+[github.com/Danielpernnasc](https://github.com/Danielpernnasc)  
+[linkedin.com/in/danielpericles](https://www.linkedin.com/in/danielpericles)
