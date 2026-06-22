@@ -4,8 +4,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
+import com.trainday.bodybuilder.api.DTO.request.RegisterRequest;
 import com.trainday.bodybuilder.domain.model.enums.Role;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -47,9 +49,12 @@ public class LoginServiceTest {
 
     @Test
     void shouldCreateLogin(){
-        LoginRequest request = new LoginRequest(
-            "dpericles6@gmail.com",
-            "123456"
+        RegisterRequest request = new RegisterRequest(
+
+            "999.999.999-99",
+                LocalDate.of(2000,01,01),
+            "athlete@host.com",
+                "123456"
         );
 
         when(passwordEncoder.encode("123456")).thenReturn("senha-criptografada");
@@ -64,7 +69,7 @@ public class LoginServiceTest {
 
         assertNotNull(service);
         assertEquals("id-user", service.id());
-        assertEquals("dpericles6@gmail.com", service.email());
+        assertEquals("athlete@host.com", service.email());
 
         verify(passwordEncoder).encode("123456");
         verify(loginrepository).save(any(Login.class));
@@ -76,28 +81,37 @@ public class LoginServiceTest {
 
         Login user = new Login();
         user.setId("user123");
-        user.setEmail("teste@gmail.com");
-        user.setPassword("123");
+        user.setEmail("athlete@host.com");
+        user.setCpf("999.999.999-99");
+        user.setPassword("123456");
 
         Athlete athlete = new Athlete();
         athlete.setId("athlete123");
         athlete.setUserId("user123");
 
-        when(loginrepository.findByEmail("teste@gmail.com"))
+        when(loginrepository.findByEmail("athlete@host.com"))
             .thenReturn(Optional.of(user));
 
         when(athleterepository.findByUserId("user123"))
             .thenReturn(Optional.of(athlete));
 
+      user.setPassword("senhaCriptografada");
+
+      when(passwordEncoder.matches(
+              "123456",
+              "senhaCriptografada"))
+              .thenReturn(true);
+
         when(jwtservice.generateToken(
-                "teste@gmail.com",
-                "user123",
-                "athlete123",
-                Role.ATHLETE))
+                        anyString(),
+                        anyString(),
+                        anyString(),
+                        anyString(),
+                        any(Role.class)))
             .thenReturn("token_fake");
 
         String token = loginservice.authenticate(
-            new LoginRequest( "teste@gmail.com", "123")
+            new LoginRequest( "athlete@host.com", "123456")
         );
 
         assertEquals("token_fake", token);

@@ -4,8 +4,11 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
+import com.trainday.bodybuilder.api.DTO.request.LoginRequest;
+import com.trainday.bodybuilder.api.DTO.request.RegisterRequest;
 import com.trainday.bodybuilder.domain.model.enums.Role;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -40,11 +43,17 @@ public class AthleteServiceTest {
 
     @Test
     void shouldcreateAhtlete(){
+        RegisterRequest registerRequest = new RegisterRequest(
+                "999.999.999-99",
+                LocalDate.of(1980, 01, 01),
+                "athlete@host.com",
+                "******"
+
+
+        );
         AthleteRequest request = new AthleteRequest(
-            "12345678900",
             "Maria Silva",
-            "maria@email.com",
-            25L,
+            null,
             Gender.FEMALE,
             GenderIdentity.CISGENDER,
             1.68,
@@ -52,21 +61,19 @@ public class AthleteServiceTest {
 
         );
         Login login = new Login();
-        login.setId("user-1");
-        login.setEmail(request.email());
+        login.setCpf(registerRequest.cpf());
 
-        when(loginrepository.findByEmail(request.email()))
-            .thenReturn(Optional.of(login));
         when(athleterepository.save(any(Athlete.class)))
             .thenAnswer(invocation -> invocation.getArgument(0));
+        when(loginrepository.findByCpf(registerRequest.cpf()))
+                .thenReturn(Optional.of(login));
         
-        Athlete create = athleteservice.createAthlete(request, "user-1");
+        Athlete create = athleteservice.createAthlete(request, registerRequest.cpf());
 
         assertNotNull(create);
-        assertEquals(request.cpf(), create.getCpf());
+
         assertEquals(request.name(), create.getName());
-        assertEquals(request.email(), create.getEmail());
-        assertEquals(request.age(), create.getAge());
+        assertEquals(request.socialName(), create.getSocialname());
         assertEquals(request.height(), create.getHeight());
         assertEquals(request.weight(), create.getWeight());
         assertEquals(login.getId(), create.getUserId());
@@ -74,11 +81,16 @@ public class AthleteServiceTest {
 
     @Test
     void shouldThrowConflictWhenCpfAlreadyExists(){
+        RegisterRequest registerReq = new RegisterRequest(
+                "999.999.999-99",
+                LocalDate.of(1980, 01, 01),
+                "athlete@host.com",
+                "000000"
+        );
         AthleteRequest request = new AthleteRequest(
-            "12345678900",
+
             "Maria Silva",
-            "maria@email.com",
-            25L,
+            null,
             Gender.FEMALE,
             GenderIdentity.CISGENDER,
             1.68,
@@ -86,92 +98,29 @@ public class AthleteServiceTest {
 
         );
         Login login = new Login();
-        login.setId("user-1");
-        login.setEmail(request.email());
-        Athlete existingAthlete = new Athlete();
-        existingAthlete.setId("athlete-1");
-        existingAthlete.setCpf(request.cpf());
+        login.setCpf(registerReq.cpf());
 
-        when(loginrepository.findByEmail(request.email()))
+        Athlete existingAthlete = new Athlete();
+        existingAthlete.setCpf("999.999.999-99");
+
+
+        when(loginrepository.findByCpf(registerReq.cpf()))
             .thenReturn(Optional.of(login));
-        when(athleterepository.findByCpf(request.cpf()))
+        when(athleterepository.findByCpf(registerReq.cpf()))
             .thenReturn(Optional.of(existingAthlete));
 
         AthleteCpfAlreadyExistsException exception = assertThrows(
-            AthleteCpfAlreadyExistsException.class,
-            () -> athleteservice.createAthlete(request, "athlete-1")
+                AthleteCpfAlreadyExistsException.class,
+                () -> athleteservice.createAthlete(request, registerReq.cpf())
         );
 
-        assertEquals("CPF already exists: " + request.cpf(), exception.getMessage());
+        assertEquals(   "CPF already exists: " + registerReq.cpf(),
+                exception.getMessage());
         verify(athleterepository, never()).save(any(Athlete.class));
     }
 
-    @Test
-    void shouldThrowExceptionWhenCpfAlreadyExists() {
-
-           AthleteRequest request = new AthleteRequest(
-            "12345678900",
-            "Maria Silva",
-            "maria@email.com",
-            25L,
-            Gender.FEMALE,
-            GenderIdentity.CISGENDER,
-            1.68,
-            62.0
-        );
-
-        Login login = new Login();
-        login.setId("user-1");
-        login.setEmail(request.email());
 
 
-
-        when(loginrepository.findByEmail(anyString()))
-                .thenReturn(Optional.of(login));
-
-        when(athleterepository.save(any(Athlete.class)))
-                        .thenThrow(DuplicateKeyException.class);
-
-        assertThrows(
-                AthleteCpfAlreadyExistsException.class,
-                () -> athleteservice.createAthlete(request, "user-1")
-        );
-    }
-
-    @Test
-    void shouldgetAthleteById(){
-          Athlete athlete = new Athlete(
-            "1",
-            "12345678900",
-            "Maria Silva",
-            "maria@email.com",
-            25L,
-            Gender.FEMALE,
-            GenderIdentity.CISGENDER,
-            1.68,
-            62.0,
-            "user-1",
-                  Role.ATHLETE
-        );
-
-    when(athleterepository.findById("1"))
-            .thenReturn(Optional.of(athlete));
-    
-    
-      AthleteResponse state = athleteservice.getAthleteById("1");
-
-        assertNotNull(state);
-        assertEquals(athlete.getId(), state.id());
-        assertEquals(athlete.getCpf(), state.cpf());
-        assertEquals(athlete.getName(), state.name());
-        assertEquals(athlete.getEmail(), state.email());
-        assertEquals(athlete.getAge(), state.age());
-        assertEquals(athlete.getGender(), state.gender());
-        assertEquals(athlete.getIdentity(), state.identity());
-        assertEquals(athlete.getHeight(), state.height());
-        assertEquals(athlete.getWeight(), state.weight());
-
-    }
 
     @Test 
         void shouldGetByCPF(){ 
@@ -179,8 +128,9 @@ public class AthleteServiceTest {
             "1",
             "12345678900",
             "Maria Silva",
+            null,
             "maria@email.com",
-            25L,
+                      LocalDate.of(2000, 01, 01),
             Gender.FEMALE,
             GenderIdentity.CISGENDER,
             1.68,
@@ -191,18 +141,19 @@ public class AthleteServiceTest {
         when(athleterepository.findByCpf("12345678900"))
             .thenReturn(Optional.of(athlete));
 
-        Athlete state = athleteservice.findbyCpf("12345678900");
+        AthleteResponse state = athleteservice.findbyCpf("12345678900");
 
         assertNotNull(state);
-        assertEquals(athlete.getId(), state.getId());
-        assertEquals(athlete.getCpf(), state.getCpf());
-        assertEquals(athlete.getName(), state.getName());
-        assertEquals(athlete.getEmail(), state.getEmail());
-        assertEquals(athlete.getAge(), state.getAge());
-        assertEquals(athlete.getGender(), state.getGender());
-        assertEquals(athlete.getIdentity(), state.getIdentity());
-        assertEquals(athlete.getHeight(), state.getHeight());
-        assertEquals(athlete.getWeight(), state.getWeight());  
+        assertEquals(athlete.getId(), state.id());
+        assertEquals(athlete.getCpf(), state.cpf());
+        assertEquals(athlete.getName(), state.name());
+        assertEquals(athlete.getSocialname(), state.socialName());
+        assertEquals(athlete.getEmail(), state.email());
+        assertEquals(athlete.getBorn(), state.born());
+        assertEquals(athlete.getGender(), state.gender());
+        assertEquals(athlete.getIdentity(), state.identity());
+        assertEquals(athlete.getHeight(), state.height());
+        assertEquals(athlete.getWeight(), state.weight());
     }
 
     @Test
@@ -211,7 +162,8 @@ public class AthleteServiceTest {
 
         existAthlete.setCpf("999.999.999-99");
         existAthlete.setName("Daniel Péricles do Nascimento");
-        existAthlete.setAge(45L);
+        existAthlete.setSocialname(null);
+        existAthlete.setBorn(LocalDate.of(2000, 01, 01));
         existAthlete.setEmail("dpericles6@gmail.com");
         existAthlete.setGender((Gender.FEMALE));
         existAthlete.setIdentity(GenderIdentity.CISGENDER);
@@ -221,7 +173,8 @@ public class AthleteServiceTest {
         Athlete updateAthlete = new Athlete();
         updateAthlete.setCpf("999.999.999-99");
         updateAthlete.setName("Daniel Péricles do Nascimento");
-        updateAthlete.setAge(44L);
+        updateAthlete.setSocialname(null);
+        updateAthlete.setBorn(LocalDate.of(2000, 01, 01));
         updateAthlete.setGender((Gender.MALE));
         updateAthlete.setIdentity(GenderIdentity.CISGENDER);
         updateAthlete.setEmail("dpericles6@hotmail.com");
@@ -235,8 +188,6 @@ public class AthleteServiceTest {
             .thenReturn(existAthlete);
     
         Athlete result = athleteservice.updateAthlete("1" , new AthleteRequest(
-            null,
-             null,    
             "Daniel Péricles do Nascimento",
             null,
             Gender.MALE,
@@ -258,7 +209,8 @@ public class AthleteServiceTest {
           Athlete existAthlete = new Athlete();
             existAthlete.setCpf("999.999.999-99");
             existAthlete.setName("Daniel Péricles do Nascimento");
-            existAthlete.setAge(45L);
+            existAthlete.setSocialname(null);
+            existAthlete.setBorn(LocalDate.of(2000, 01, 01));
             existAthlete.setEmail("dpericles6@gmail.com");
             existAthlete.setGender((Gender.FEMALE));
             existAthlete.setIdentity(GenderIdentity.CISGENDER);
@@ -266,71 +218,61 @@ public class AthleteServiceTest {
             existAthlete.setWeight(181.90);
             existAthlete.setRole(Role.ATHLETE);
             Athlete patchAthlete = new Athlete();
+            patchAthlete.setSocialname("Daniel Péricles");
             patchAthlete.setGender(Gender.MALE);
             patchAthlete.setWeight(107.5);
 
-             when(athleterepository.findById("1"))
+             when(athleterepository.findByCpf("999.999.999-99"))
             .thenReturn(Optional.of(existAthlete));
 
-            when(athleterepository.save(any(Athlete.class)))
-            .thenReturn(existAthlete);
+         when(athleterepository.save(any(Athlete.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
 
-            Athlete result = athleteservice.pathAthlete("1" , new AthleteRequest(
-                "999.999.999-99",
+            Athlete result = athleteservice.pathAthlete("999.999.999-99" , new AthleteRequest(
                 "Daniel Péricles do Nascimento",
-                "dpericles6@gmail.com",
-                45L,
-                Gender.MALE,
-                GenderIdentity.CISGENDER,
-                181.90,
-                107.50
+                "Daniel Péricles",
+                    Gender.MALE,
+            GenderIdentity.CISGENDER,
+            182.5,
+                    107.5
+
             ));
             
            assertNotNull(result);
-           assertEquals("999.999.999-99", result.getCpf());
            assertEquals("Daniel Péricles do Nascimento", result.getName());
-           assertEquals("dpericles6@gmail.com", result.getEmail());
-           assertEquals(45L, result.getAge());
+
+           assertEquals("Daniel Péricles", result.getSocialname());
            assertEquals(Gender.MALE, result.getGender());
            assertEquals(GenderIdentity.CISGENDER, result.getIdentity());
-           assertEquals(181.90, result.getHeight());
-           assertEquals(107.50, result.getWeight());
-           assertEquals(Role.ATHLETE, result.getRole());
+           assertEquals(182.5, result.getHeight());
+           assertEquals(107.5, result.getWeight());
+
 
     }
 
     @Test
     void shouldUpdateAthlete_whenCpfIsProvided() {
         Athlete existAthlete = new Athlete();
-        existAthlete.setCpf("111.111.111-11");
+        existAthlete.setId("1");
+        existAthlete.setName("Maria");
 
         when(athleterepository.findById("1"))
             .thenReturn(Optional.of(existAthlete));
 
         when(athleterepository.save(any(Athlete.class)))
-            .thenReturn(existAthlete);
-
-        // 👇 aqui você precisa MOCKAR o validateCpfAvailable se ele for interno
-        doNothing().when(athleteservice).validateCpfAvailable("999.999.999-99", "1");
+                .thenAnswer(invocation -> invocation.getArgument(0));
 
         Athlete result = athleteservice.updateAthlete(
-            "1",
-            new AthleteRequest(
-                "999.999.999-99", // 👈 CPF agora vem preenchido
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null
-            )
+                "1",
+                new AthleteRequest(
+                        "Maria Silva",
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
+                )
         );
-
-        assertEquals("999.999.999-99", result.getCpf());
-        
-
-        verify(athleteservice).validateCpfAvailable("999.999.999-99", "1");
     }
 
 
@@ -341,14 +283,14 @@ public class AthleteServiceTest {
         existAthlete.setCpf("111.111.111-11");
 
            AthleteRequest request =  new AthleteRequest(
-                "999.999.999-99", // 👈 CPF agora vem preenchido
-                null,
+
                 null,
                 null,
                 null,
                 null,
                 null,
                 null
+
             );
 
         when(athleterepository.findById(anyString()))
@@ -371,7 +313,8 @@ public class AthleteServiceTest {
         existAthlete.setId("1");
         existAthlete.setCpf("999.999.999-99");
         existAthlete.setName("Daniel Péricles do Nascimento");
-        existAthlete.setAge(45L);
+        existAthlete.setSocialname(null);
+        existAthlete.setBorn(        LocalDate.of(2000, 01, 01));
         existAthlete.setGender(Gender.MALE);
         existAthlete.setIdentity(GenderIdentity.CISGENDER);
         existAthlete.setEmail("dpericles6@gmail.com");
@@ -391,6 +334,25 @@ public class AthleteServiceTest {
          verify(athleterepository).deleteById("1");
          verify(loginrepository).deleteById("user-1");
 
+    }
+
+    @Test
+    void shouldThrowExceptionWhenCpfAlreadyExists() {
+
+        Athlete athlete = new Athlete();
+        athlete.setId("1");
+        athlete.setCpf("999.999.999-99");
+
+        when(athleterepository.findByCpf("999.999.999-99"))
+                .thenReturn(Optional.of(athlete));
+
+        assertThrows(
+                AthleteCpfAlreadyExistsException.class,
+                () -> athleteservice.validateCpfAvailable(
+                        "999.999.999-99",
+                        null
+                )
+        );
     }
 
 

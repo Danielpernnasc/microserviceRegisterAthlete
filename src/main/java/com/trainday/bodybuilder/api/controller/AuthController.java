@@ -2,6 +2,7 @@ package com.trainday.bodybuilder.api.controller;
 
 import java.util.Map;
 
+import com.trainday.bodybuilder.api.DTO.request.RegisterRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,7 +25,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public LoginResponse register(@RequestBody LoginRequest request){
+    public LoginResponse register(@RequestBody RegisterRequest request){
         return service.createLogin(request);
     }
 

@@ -30,27 +30,29 @@ public class LoginUserDetailsServiceTest {
     void shouldLoadByUserName() {
         Login login = new Login();
         login.setId("1");
+        login.setCpf("999.999.999-99");
         login.setEmail("daniel@email.com");
         login.setPassword("123456");
 
-        when(loginRepository.findByEmail("daniel@email.com"))
+        when(loginRepository.findByCpf("999.999.999-99"))
                 .thenReturn(Optional.of(login));
 
         UserDetails userDetails =
-                loginUserDetailsService.loadUserByUsername("daniel@email.com");
+                loginUserDetailsService.loadUserByUsername("999.999.999-99");
 
-        assertEquals("daniel@email.com", userDetails.getUsername());
+
+        assertEquals("999.999.999-99", userDetails.getUsername());
         assertEquals("123456", userDetails.getPassword());
     }
 
     @Test
     void shouldThrowWhenUserNotFound() {
-        when(loginRepository.findByEmail("naoexiste@email.com"))
+        when(loginRepository.findByCpf("999.999.999-99"))
             .thenReturn(Optional.empty());
 
         assertThrows(
              UsernameNotFoundException.class,
-             () -> loginUserDetailsService.loadUserByUsername("naoexiste@email.com")
+             () -> loginUserDetailsService.loadUserByUsername("999.999.999-99")
             );
     }
 

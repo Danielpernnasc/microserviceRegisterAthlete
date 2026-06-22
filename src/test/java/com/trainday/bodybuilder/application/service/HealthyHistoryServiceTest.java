@@ -305,22 +305,24 @@ public class HealthyHistoryServiceTest {
     @Test
     void shouldpatchHH(){
 
-        HealthyHistoryUpdatePatchRequest hhrequest = new HealthyHistoryUpdatePatchRequest(
-                false,
-                Alcoholic.DOESNT_DRINK,
-                true,
-                List.of(DiseaseType.HYPERTENSION),
-                List.of("Losartana"),
-                true,
-                List.of("Dipirona"),
-                true,
-                List.of("Cirugia no joelho esquerdo"),
-                "Hipertensão por parte de pai e mãe"
-
-        );
         HealthyHistory existHH = new HealthyHistory();
-        existHH.setId("athlete@host.com");
+        existHH.setId("9897654");
         existHH.setAthleteCpf("999.999.999-99");
+        existHH.setSmoker(false);
+        existHH.setAlcoholic(Alcoholic.SOCIALLY);
+        existHH.setDisease(List.of(DiseaseType.HYPERTENSION));
+        existHH.setMedications(List.of("Losartana"));
+        existHH.setAllergies(true);
+        existHH.setWhatAllergies(List.of("Dipirona"));
+        existHH.setSurgeries(true);
+        existHH.setWheresurgeries(List.of("Operação no Joelho esquerdo"));
+        existHH.setFamilyHistory("Hipertensão por parte de Pai e Diabete por parte de mãe");
+        HealthyHistory patchHH = new HealthyHistory();
+        patchHH.setAllergies(true);
+        patchHH.setWhatAllergies(List.of("Dipirona", "Amoxilina"));
+        patchHH.setSurgeries(true);
+        patchHH.setWheresurgeries(List.of("Joelho direito"));
+
 
         when(hhRepository.findByAthleteCpf("999.999.999-99"))
         .thenReturn(Optional.of(existHH));
@@ -330,22 +332,28 @@ public class HealthyHistoryServiceTest {
 
         HealthyHistory result = hhService.pathHH("999.999.999-99",
                 new  HealthyHistoryUpdatePatchRequest(
+
                         false,
                         Alcoholic.DOESNT_DRINK,
                         true,
                         List.of(DiseaseType.HYPERTENSION, DiseaseType.OTHERS),
                         List.of("Losartana", "desvenlafaxina"),
-                        false,
-                        null,
-                        false,
-                        null,
+                        true,
+                        List.of("Dipirona", "Amoxilina"),
+                        true,
+                        List.of("Joelho direito"),
                         "Hipertensão por parte de pai e mãe"
                 ));
         assertNotNull(result);
-        assertEquals("athlete@host.com", result.getId());
+        assertEquals("9897654", result.getId());
         assertEquals("999.999.999-99", result.getAthleteCpf());
         assertEquals(List.of(DiseaseType.HYPERTENSION, DiseaseType.OTHERS), result.getDisease());
         assertEquals(List.of("Losartana", "desvenlafaxina"), result.getMedications());
+        assertEquals(true, result.isAllergies());
+        assertEquals(List.of("Dipirona", "Amoxilina"), result.getWhatAllergies());
+        assertEquals(true, result.isSurgeries());
+        assertEquals(List.of("Joelho direito"), result.getWheresurgeries());
+        assertEquals("Hipertensão por parte de pai e mãe", result.getFamilyHistory());
 
 
 

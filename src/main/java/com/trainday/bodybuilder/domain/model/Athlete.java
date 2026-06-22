@@ -12,6 +12,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.text.DateFormat;
+import java.time.LocalDate;
+
 
 @Data
 @NoArgsConstructor
@@ -24,8 +27,10 @@ public class Athlete {
     @Indexed(unique = true)
     private String cpf;
     private String name;
+    private String socialname;
+    @Indexed(unique = true)
     private String email;
-    private Long age;
+    private LocalDate born;
     private Gender gender;
     private GenderIdentity identity;
     private Double height;

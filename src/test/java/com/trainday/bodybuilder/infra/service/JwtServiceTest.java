@@ -29,8 +29,8 @@ public class JwtServiceTest {
 
     @Test
     void shouldGenerateToken(){
-
-         String token = jwtService.generateToken("usuary-123", "user1", "athlete1", Role.ATHLETE);
+        String idWait = "usuary-123";
+         String token = jwtService.generateToken( idWait, "athlete@host.com", "999.999.999-99", "athlete1", Role.ATHLETE);
 
          assertNotNull(token);
          assertFalse(token.isBlank());
@@ -41,7 +41,7 @@ public class JwtServiceTest {
     void shouldContentCorret(){
         String idWait = "usuary-123";
 
-        String token = jwtService.generateToken(idWait, "user1", "athlete1", Role.ATHLETE);
+        String token = jwtService.generateToken(idWait, "athlete@host.com", "999.999.999-99", "athlete1", Role.ATHLETE);
 
 
         Claims claims = Jwts.parserBuilder()
@@ -50,12 +50,13 @@ public class JwtServiceTest {
             .parseClaimsJws(token)
             .getBody();
 
-            assertEquals(idWait, claims.getSubject());
+            assertEquals("athlete@host.com", claims.getSubject());
     }
 
     @Test
     void shouldExpiredInFuture(){
-        String token = jwtService.generateToken("usuary-123", "user1", "athlete1", Role.ATHLETE);
+        String idWait = "usuary-123";
+        String token = jwtService.generateToken(idWait,"usuary-123", "user1", "athlete1", Role.ATHLETE);
 
         Claims claims = Jwts.parserBuilder()
                     .setSigningKey(jwtService.testgetKey())
@@ -70,7 +71,8 @@ public class JwtServiceTest {
 
     @Test
     void shouldGererTokenValid(){
-        String token = jwtService.generateToken("usuary-123", "user1", "athlete1", Role.ATHLETE);
+        String idWait = "usuary-123";
+        String token = jwtService.generateToken(idWait, "usuary-123", "user1", "athlete1", Role.ATHLETE);
 
 
         assertDoesNotThrow(() -> 
@@ -83,9 +85,10 @@ public class JwtServiceTest {
     @Test
     void shoudextractEmail(){
 
+        String idWait = "usuary-123";
         String emailWait = "daniel@host.com";
-        String token = jwtService.generateToken(emailWait, "user1", "athlete1", Role.ATHLETE);
-        String emailExtraido = jwtService.extractEmail(token);
+        String token = jwtService.generateToken(idWait, emailWait, "user1", "athlete1", Role.ATHLETE);
+        String emailExtraido = jwtService.extractSubject(token);
         assertEquals(emailWait, emailExtraido);
     }
 
@@ -93,12 +96,13 @@ public class JwtServiceTest {
     void shouldthrowsExceptionWithTokenValid(){
         String tokeGarbage = "this.is.not.a.token";
 
-        assertThrows(Exception.class, () -> jwtService.extractEmail(tokeGarbage));
+        assertThrows(Exception.class, () -> jwtService.extractSubject(tokeGarbage));
     }
 
     @Test
     void shouldTokenValid(){
-        String token = jwtService.generateToken("daniel@host.com", "user1", "athlete1", Role.ATHLETE);
+        String idWait = "usuary-123";
+        String token = jwtService.generateToken(idWait,"daniel@host.com", "user1", "athlete1", Role.ATHLETE);
 
         boolean result = jwtService.isTokenValid(token);
 
@@ -117,7 +121,8 @@ public class JwtServiceTest {
     @Test
     void shouldReturnFalseToTokenExpired(){
         ReflectionTestUtils.setField(jwtService, "expiration", -1L);
-        String token = jwtService.generateToken("daniel@host.com", "user1", "athlete1", Role.ATHLETE);
+        String idWait = "usuary-123";
+        String token = jwtService.generateToken(idWait, "daniel@host.com", "user1", "athlete1", Role.ATHLETE);
 
         boolean result = jwtService.isTokenValid(token);
 
@@ -126,8 +131,9 @@ public class JwtServiceTest {
 
     @Test
     void shoulExtractUserName(){
+        String idWait = "usuary-123";
         String userNameWait = "daniel@host.com";
-        String token = jwtService.generateToken(userNameWait, "user1", "athlete1", Role.ATHLETE);
+        String token = jwtService.generateToken(idWait, userNameWait, "user1", "athlete1", Role.ATHLETE);
         String userNameExtracted = jwtService.extractUsername(token);
         assertEquals(userNameWait, userNameExtracted);
     }

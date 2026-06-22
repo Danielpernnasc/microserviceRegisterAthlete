@@ -10,6 +10,8 @@ import com.trainday.bodybuilder.domain.model.Login;
 @Repository
 public interface LoginRepository extends MongoRepository<Login, String>  {
 
+     Optional<Login> findByCpf(String cpf);
+
      Optional<Login> findByEmail(String email);
 
 }

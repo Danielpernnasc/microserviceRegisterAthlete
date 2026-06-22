@@ -1,6 +1,7 @@
 package com.trainday.bodybuilder.domain.model;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 
@@ -8,6 +9,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
 
 
 @Data
@@ -18,7 +21,11 @@ public class Login {
 
     @Id
     private String id;
-    private String email; // usar o email da variavel que vem do Athlete
+    @Indexed(unique = true)
+    private String cpf;
+    @Indexed(unique = true)
+    private String email;
+    private LocalDate born;
     private String password;
 
 }

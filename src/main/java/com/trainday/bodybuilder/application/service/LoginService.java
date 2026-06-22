@@ -4,6 +4,7 @@ package com.trainday.bodybuilder.application.service;
 
 import java.util.Optional;
 
+import com.trainday.bodybuilder.api.DTO.request.RegisterRequest;
 import com.trainday.bodybuilder.domain.model.enums.Role;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -40,33 +41,53 @@ public class LoginService {
         this.loginRepository = loginRepository;
         this.athleteRepository = athleteRepository;
         this.jwtservice = jwtservice;
-        this.authenticationManager = authenticationManager; 
+        this.authenticationManager = authenticationManager;
         this.passwordEncoder =  passwordEncoder;
     }
 
 
-    public LoginResponse createLogin(LoginRequest loginRequest ){
+    public LoginResponse createLogin(RegisterRequest registerRequest ){
         Login login = new Login();
-        login.setEmail(loginRequest.email());
-        login.setPassword(passwordEncoder.encode(loginRequest.password()));
+        login.setCpf(registerRequest.cpf());
+        login.setEmail(registerRequest.email());
+        login.setBorn(registerRequest.born());
+        login.setPassword(passwordEncoder.encode(registerRequest.password()));
          Login saved = loginRepository.save(login);
         return new LoginResponse(
           saved.getId(),
-          saved.getEmail()
+          saved.getEmail(),
+                saved.getCpf(),
+                saved.getBorn()
         );
 
-        
+
     }
 
 
    public String authenticate(LoginRequest request) {
+       System.out.println("LOGIN RECEBIDO = " + request.login());
 
+       Optional<Login> user = loginRepository.findByEmail(request.login());
+       System.out.println("ACHOU EMAIL = " + user.isPresent());
+       if (user.isEmpty()) {
+           user = loginRepository.findByCpf(request.login());
+           System.out.println("ACHOU CPF = " + user.isPresent());
+       }
+       Login login = user.orElseThrow(
+               () -> new RuntimeException("Invalid login or password")
+       );
+       if (!passwordEncoder.matches(
+               request.password(),
+               login.getPassword())) {
 
-    try {
+           throw new RuntimeException("Invalid login or password");
+       }
+
+       try {
 
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
-                request.email(),
+                request.login(),
                 request.password()
             )
         );
@@ -78,25 +99,23 @@ public class LoginService {
 
 
 
-    Login user = loginRepository.findByEmail(request.email())
-            .orElseThrow(() ->
-                new UsernameNotFoundException("User not found")
-            );
+       Optional<Athlete> athleteOpt =
+               athleteRepository.findByUserId(login.getId());
 
-    Optional<Athlete> athletOpt = athleteRepository.findByUserId(user.getId());
-
-    String athleteId = athletOpt
+    String athleteId = athleteOpt
             .map(Athlete::getId)
             .orElse(null);
-    Role role = athletOpt
+
+    Role role = athleteOpt
             .map(Athlete::getRole)
             .orElse(Role.ATHLETE);
 
 
 
     return jwtservice.generateToken(
-            user.getEmail(),
-            user.getId(),
+            login.getEmail(),
+            login.getCpf(),
+            login.getId(),
             athleteId,
             role
     );

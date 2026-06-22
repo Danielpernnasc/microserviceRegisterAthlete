@@ -12,27 +12,34 @@ import org.springframework.stereotype.Service;
 import com.trainday.bodybuilder.domain.model.Login;
 import com.trainday.bodybuilder.domain.repository.LoginRepository;
 
+import java.util.Optional;
+
 @Service
 public class LoginUserDetailsService implements UserDetailsService {
 
     private final LoginRepository loginRepository;
+    private final static String Athlete_not_found = "Athlete not found";
 
     public LoginUserDetailsService(LoginRepository loginRepository){
         this.loginRepository = loginRepository;
     }
 
  @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Login login = loginRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado: "));
-        
+    public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
+        Optional<Login> user = loginRepository.findByEmail(login);
+        if(user.isEmpty()){
+            user = loginRepository.findByCpf(login);
+        }
+     Login athlete = user.orElseThrow(
+             () -> new UsernameNotFoundException(Athlete_not_found));
 
-        return User
-                .builder()
-                .username(login.getEmail())
-                .password(login.getPassword())
-                .authorities("USER")
-                .build();
+
+
+     return User.builder()
+             .username(athlete.getCpf())
+             .password(athlete.getPassword())
+             .authorities("USER")
+             .build();
     }
 
 
