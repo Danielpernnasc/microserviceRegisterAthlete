@@ -3,8 +3,10 @@ package com.trainday.bodybuilder.api.controller;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import java.time.LocalDate;
 import java.util.Map;
 
+import com.trainday.bodybuilder.api.DTO.request.RegisterRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -31,7 +33,9 @@ public class AuthControllerTest {
 
     @Test
     void shouldRegister(){
-        LoginRequest loginreq = new LoginRequest(
+        RegisterRequest registerRequestreq = new RegisterRequest(
+                "999.999.999-99",
+                LocalDate.of(2000,01,01),
                 "dpericles6@gmail.com",
                 "123456"
         );
@@ -39,19 +43,21 @@ public class AuthControllerTest {
 
         LoginResponse loginResponse = new LoginResponse(
               "user-1",
-              "dpericles6@gmail.com"
-    
+              "dpericles6@gmail.com",
+                "999.999.999-99",
+                LocalDate.of(2000,01,01)
+
         );
 
-        when(loginservice.createLogin(loginreq)).thenReturn(loginResponse);
+        when(loginservice.createLogin(registerRequestreq)).thenReturn(loginResponse);
 
-        LoginResponse created = authController.register(loginreq);
+        LoginResponse created = authController.register(registerRequestreq);
 
         assertNotNull(created);
         assertEquals("user-1", created.id());
         assertEquals("dpericles6@gmail.com", created.email());
 
-        verify(loginservice).createLogin(loginreq);
+        verify(loginservice).createLogin(registerRequestreq);
     }
 
     @Test

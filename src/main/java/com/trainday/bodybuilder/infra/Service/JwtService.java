@@ -32,9 +32,12 @@ public class JwtService{
 
     public String generateToken(
             String email,
+            String cpf,
             String userId,
             String athleteId,
-            Role role) {
+            Role role
+    ) {
+
 
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", userId);
@@ -45,16 +48,17 @@ public class JwtService{
 
         return Jwts.builder()
                 .setClaims(claims)
-                .setSubject(email)
+                .setSubject(cpf)
                 .setIssuedAt(new Date())
                 .setExpiration(
                     new Date(System.currentTimeMillis() + expiration)
                 )
                 .signWith(getKey(), SignatureAlgorithm.HS256)
                 .compact();
+
     }
 
-    public String extractEmail(String token){
+    public String extractSubject(String token){
         return Jwts.parserBuilder()
                 .setSigningKey(getKey())
                 .build()
@@ -82,7 +86,6 @@ public class JwtService{
                     .getSubject();
     }
 
-    
-    
+
 
 }

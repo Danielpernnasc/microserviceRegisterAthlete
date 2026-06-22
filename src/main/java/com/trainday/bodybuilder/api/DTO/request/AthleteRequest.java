@@ -4,11 +4,11 @@ import com.trainday.bodybuilder.domain.model.enums.Gender;
 import com.trainday.bodybuilder.domain.model.enums.GenderIdentity;
 import com.trainday.bodybuilder.domain.model.enums.Role;
 
+import java.time.LocalDate;
+
 public record AthleteRequest(
-        String cpf,
         String name,
-        String email,
-        Long age,
+        String socialName,
         Gender gender,
         GenderIdentity identity,
         Double height,

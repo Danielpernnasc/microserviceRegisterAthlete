@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 import com.trainday.bodybuilder.domain.model.enums.Role;
@@ -45,10 +46,8 @@ public class AthleteControllerTest {
     @Test
     void shouldSaveAhtlete() {
         AthleteRequest athleteReq = new AthleteRequest(
-            "123.456.789-00",
             "Daniel Péricles do Nascimento",
-            "dpericles6@gmail.com",
-            45L,
+            null,
             Gender.MALE,
             GenderIdentity.CISGENDER,
             182.5,
@@ -60,7 +59,7 @@ public class AthleteControllerTest {
         athlete.setCpf("123.456.789-00");
         athlete.setName("Daniel Péricles do Nascimento");
         athlete.setEmail("dpericles6@gmail.com");
-        athlete.setAge(45L);
+        athlete.setBorn(LocalDate.of(2000, 01, 01));
         athlete.setGender(Gender.MALE);
         athlete.setIdentity(GenderIdentity.CISGENDER);
         athlete.setHeight(182.5);
@@ -79,10 +78,8 @@ public class AthleteControllerTest {
         ResponseEntity<Athlete> created = athleteController.save(athleteReq, authentication);
 
         assertNotNull(created);
-        assertEquals(athleteReq.cpf(), created.getBody().getCpf());
         assertEquals(athleteReq.name(), created.getBody().getName());
-        assertEquals(athleteReq.email(), created.getBody().getEmail());
-        assertEquals(athleteReq.age(), created.getBody().getAge());
+        assertEquals(athleteReq.socialName(), created.getBody().getSocialname());
         assertEquals(athleteReq.gender(), created.getBody().getGender());
         assertEquals(athleteReq.identity(), created.getBody().getIdentity());
         assertEquals(athleteReq.height(), created.getBody().getHeight());
@@ -92,47 +89,12 @@ public class AthleteControllerTest {
         verify(athleteservice).createAthlete(athleteReq, "user-1");
     }
 
-    @Test
-    void shouldFindByid() {
-        AthleteResponse athleteResponse = new AthleteResponse(
-            "1",
-            "123.456.789-00",
-            "Daniel Péricles do Nascimento",
-            "dpericles6@gmail.com",
-            45L,
-            Gender.MALE,
-            GenderIdentity.CISGENDER,
-            182.5,
-                105.5
-
-        );
-
-        when(athleteservice.getAthleteById("1"))
-            .thenReturn(athleteResponse);
-
-          AthleteResponse result = athleteController.findById("1");
-    
-
-            assertEquals("1", result.id());
-            assertEquals("123.456.789-00", result.cpf());
-            assertEquals("Daniel Péricles do Nascimento", result.name());
-            assertEquals("dpericles6@gmail.com", result.email());
-            assertEquals(45L, result.age());
-            assertEquals(Gender.MALE, result.gender());
-            assertEquals(GenderIdentity.CISGENDER, result.identity());
-            assertEquals(182.5, result.height());
-            assertEquals(105.5, result.weight());
-
-            verify(athleteservice).getAthleteById("1");
-    }
 
     @Test
     void shouldUpdateAthlete(){
         AthleteRequest athleteReq = new AthleteRequest(
-            "123.456.789-00",
             "Daniel Péricles do Nascimento",
-            "dpericles6@gmail.com",
-            45L,
+            null,
             Gender.MALE,
             GenderIdentity.CISGENDER,
             182.5,
@@ -142,8 +104,9 @@ public class AthleteControllerTest {
         Athlete athlete = new Athlete();
         athlete.setCpf("123.456.789-00");
         athlete.setName("Daniel Péricles do Nascimento");
+        athlete.setSocialname(null);
         athlete.setEmail("dpericles6@gmail.com");
-        athlete.setAge(45L);
+        athlete.setBorn(      LocalDate.of(2000, 01, 01));
          athlete.setGender(Gender.MALE);
          athlete.setIdentity(GenderIdentity.CISGENDER);
         athlete.setHeight(182.5);
@@ -155,10 +118,7 @@ public class AthleteControllerTest {
         
 
         assertNotNull(updated);
-        assertEquals("123.456.789-00", athleteReq.cpf());
         assertEquals("Daniel Péricles do Nascimento", athleteReq.name());
-        assertEquals("dpericles6@gmail.com", athleteReq.email());
-        assertEquals(45L, athleteReq.age());
         assertEquals(Gender.MALE, athleteReq.gender());
         assertEquals(GenderIdentity.CISGENDER, athleteReq.identity());
         assertEquals(182.5, athleteReq.height());
@@ -172,10 +132,8 @@ public class AthleteControllerTest {
     void shouldPatchAtlhete(){
 
           AthleteRequest athleteReq = new AthleteRequest(
-            "123.456.789-00",
             "Daniel Péricles do Nascimento",
-            "dpericles6@gmail.com",
-            45L,
+            null,
             Gender.MALE,
             GenderIdentity.CISGENDER,
             107.5,
@@ -198,19 +156,22 @@ public class AthleteControllerTest {
 
     @Test
     void shouldFindByCpf(){
-         Athlete athlete = new Athlete();
-        athlete.setId("1");
-        athlete.setCpf("123.456.789-00");
-        athlete.setName("Daniel Péricles do Nascimento");
-        athlete.setEmail("dpericles6@gmail.com");
-        athlete.setAge(45L);
-        athlete.setGender(Gender.MALE);
-        athlete.setIdentity(GenderIdentity.CISGENDER);
-        athlete.setHeight(182.5);
-        athlete.setWeight(105.5);
+         AthleteResponse athlete = new AthleteResponse(
+                 "123456789",
+                 "123.456.789-00",
+                 "Daniel Péricles do Nascimento",
+                 null,
+                 "dpericles6@gmail.com",
+                 LocalDate.of(2000, 01, 01),
+                 Gender.MALE,
+                 GenderIdentity.CISGENDER,
+                 182.5,
+                 105.5
+         );
 
-         when(athleteservice.findbyCpf(anyString()))
-        .thenReturn(athlete);
+
+        when(athleteservice.findbyCpf("123.456.789-00"))
+                .thenReturn(athlete);
 
         ResponseEntity<AthleteResponse> result =
             athleteController.findByCpf("123.456.789-00");
@@ -221,11 +182,11 @@ public class AthleteControllerTest {
         AthleteResponse body = result.getBody();
     
         assertNotNull(body);
-        assertEquals("1", body.id());
+        assertEquals("123456789", body.id());
         assertEquals("Daniel Péricles do Nascimento", body.name());
         assertEquals("123.456.789-00", body.cpf());
         assertEquals("dpericles6@gmail.com", body.email());
-        assertEquals(45L, body.age());
+        assertEquals(LocalDate.of(2000, 01, 01), body.born());
         assertEquals(Gender.MALE, body.gender());
         assertEquals(GenderIdentity.CISGENDER, body.identity());
         assertEquals(182.5, body.height());
@@ -244,14 +205,13 @@ public class AthleteControllerTest {
             existAthlete.setId("1");
             existAthlete.setCpf("999.999.999-99");
             existAthlete.setName("Daniel Péricles do Nascimento");
-            existAthlete.setAge(45L);
+            existAthlete.setBorn(LocalDate.of(2000, 01, 01));
             existAthlete.setGender(Gender.MALE);
             existAthlete.setIdentity(GenderIdentity.CISGENDER);
             existAthlete.setEmail("dpericles6@gmail.com");
             existAthlete.setHeight(181.90);
             existAthlete.setWeight(105.10);
             existAthlete.setRole(Role.ATHLETE);
-            existAthlete.setUserId("user-1");
 
     
 

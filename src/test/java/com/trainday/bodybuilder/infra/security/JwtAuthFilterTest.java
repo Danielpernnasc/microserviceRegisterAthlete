@@ -121,14 +121,14 @@ public class JwtAuthFilterTest {
         request.addHeader("Authorization", "Bearer token-valid");
 
         when(jwtService.isTokenValid("token-valid")).thenReturn(true);
-        when(jwtService.extractEmail("token-valid")).thenReturn("user@host.com");
+        when(jwtService.extractSubject("token-valid")).thenReturn("user@host.com");
         when(userDetailsService.loadUserByUsername("user@host.com")).thenReturn(userDetails);
 
         jwtAuthFilter.doFilterInternal(request, response, filterChain);
 
 
        verify(jwtService).isTokenValid("token-valid");
-       verify(jwtService).extractEmail("token-valid");
+       verify(jwtService).extractSubject("token-valid");
        verify(userDetailsService).loadUserByUsername("user@host.com");
        verify(filterChain).doFilter(request, response);
     }
@@ -182,7 +182,7 @@ public class JwtAuthFilterTest {
     when(jwtService.isTokenValid("token-valid"))
             .thenReturn(true);
 
-    when(jwtService.extractEmail("token-valid"))
+    when(jwtService.extractSubject("token-valid"))
             .thenReturn("user@host.com");
 
     when(userDetailsService.loadUserByUsername(
@@ -199,7 +199,7 @@ public class JwtAuthFilterTest {
             .isTokenValid("token-valid");
 
     verify(jwtService)
-            .extractEmail("token-valid");
+            .extractSubject("token-valid");
 
     verify(userDetailsService)
             .loadUserByUsername("user@host.com");

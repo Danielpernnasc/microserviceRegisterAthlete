@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 @SecurityRequirement(name = "bearerAuth")
 public class AthleteController {
 
-   
+
     private final AthleteService service;
 
 
@@ -48,6 +48,7 @@ public class AthleteController {
         @RequestBody AthleteRequest req,
         Authentication authentication
     ) {
+      System.out.println("CHEGOU NO CONTROLLER");
         String athleteId = authentication.getName();
 
         Athlete createdAthlete = service.createAthlete(req, athleteId);
@@ -55,30 +56,25 @@ public class AthleteController {
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(createdAthlete);
     }
-        @GetMapping("/{id}")
-        public AthleteResponse findById(
-            @PathVariable String id
-        ) {
-            return service.getAthleteById(id);
-        
-        }
+
 
     @GetMapping("/cpf/{cpf}")
     public ResponseEntity<AthleteResponse> findByCpf(
         @PathVariable String cpf
     ){
-        Athlete athlete = service.findbyCpf(cpf);
+        AthleteResponse athlete = service.findbyCpf(cpf);
 
         return ResponseEntity.ok(new AthleteResponse(
-            athlete.getId(),
-            athlete.getCpf(),
-            athlete.getName(),
-            athlete.getEmail(),
-            athlete.getAge(),
-            athlete.getGender(),
-            athlete.getIdentity(),
-            athlete.getHeight(),
-            athlete.getWeight()
+            athlete.id(),
+            athlete.cpf(),
+            athlete.name(),
+            athlete.socialName(),
+            athlete.email(),
+            athlete.born(),
+            athlete.gender(),
+            athlete.identity(),
+            athlete.height(),
+            athlete.weight()
         ));
     }
 
@@ -103,6 +99,6 @@ public class AthleteController {
     public void deleteAhtlete(@PathVariable String id){
         service.deleteAthlete(id);
     }
-    
+
 }
 
