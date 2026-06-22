@@ -8,7 +8,6 @@ import java.util.List;
 
 @Builder
 public record HealthyHistoryRequest(
-        String athleteCpf,
         Boolean smoker,
         Alcoholic alcoholic,
         Boolean physicallyActive,

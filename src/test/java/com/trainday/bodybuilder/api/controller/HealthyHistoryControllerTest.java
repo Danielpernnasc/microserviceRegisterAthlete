@@ -14,13 +14,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class HealthyHistoryControllerTest {
@@ -36,7 +36,6 @@ public class HealthyHistoryControllerTest {
     @Test
     void shoudSaveHH(){
         HealthyHistoryRequest hhrequest = new HealthyHistoryRequest(
-              "999.999.999-99",
               false,
                 Alcoholic.DOESNT_DRINK,
                 true,
@@ -62,14 +61,19 @@ public class HealthyHistoryControllerTest {
         hh.setWheresurgeries(null);
         hh.setFamilyHistory("Hipertensão por parte de Pai e Mãe");
 
-        when(hhService.createPacient(hhrequest))
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.getName()).thenReturn("authenticate");
+
+        when(hhService.createPacient(hhrequest, "authenticate"))
                 .thenReturn(hh);
+
+
         ResponseEntity<HealthyHistory> response =
-                hhController.save(hhrequest);
+                hhController.save(hhrequest, authentication);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
 
-        HealthyHistory created = hhController.save(hhrequest).getBody();
+        HealthyHistory created = hhController.save(hhrequest, authentication).getBody();
 
         assertNotNull(created);
         assertEquals(hh.getId(), created.getId());

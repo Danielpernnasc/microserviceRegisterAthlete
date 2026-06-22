@@ -13,7 +13,6 @@ public class HealtyHistoryRequestTest {
     @Test
     void shouldHealtyHistoryRequest(){
         HealthyHistoryRequest hhrequest = new HealthyHistoryRequest(
-                "999.999.999-99",
                 false,
                 Alcoholic.DOESNT_DRINK,
                 true,
@@ -26,7 +25,6 @@ public class HealtyHistoryRequestTest {
                 "Hipertensão por parte de pai e mãe"
 
         );
-        assertEquals("999.999.999-99", hhrequest.athleteCpf());
         assertEquals(false, hhrequest.smoker());
         assertEquals(Alcoholic.DOESNT_DRINK, hhrequest.alcoholic());
         assertEquals(true, hhrequest.physicallyActive());
