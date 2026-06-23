@@ -315,12 +315,8 @@ curl http://localhost:8080/rota-protegida \
 ```
 
 ---
-### Arquitetura em Camadas
 
-![Arquitetura em Camadas](./docs/arquitetura_camadas_register_athlete.svg)
-
-### Arquitetura hexagonal
-
+![Arquitetura Hexagonal](./docs/arquitetura_camadas_register_athlete.svg)
 ![Arquitetura Hexagonal](./docs/arquitetura_hexagonal_register_athlete.svg)
 
 
