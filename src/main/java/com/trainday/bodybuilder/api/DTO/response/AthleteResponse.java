@@ -16,7 +16,8 @@ public record AthleteResponse(
         Gender gender,
         GenderIdentity identity,
         Double height,
-        Double weight
+        Double weight,
+        Role role
 
 ) {}
 

@@ -58,11 +58,13 @@ public class AthleteController {
     }
 
 
-    @GetMapping("/cpf/{cpf}")
+    @GetMapping("/athlete/me")
     public ResponseEntity<AthleteResponse> findByCpf(
-        @PathVariable String cpf
+        Authentication authentication
     ){
-        AthleteResponse athlete = service.findbyCpf(cpf);
+
+        String cpf = authentication.getName();
+        AthleteResponse athlete = service.findMyProfile(cpf);
 
         return ResponseEntity.ok(new AthleteResponse(
             athlete.id(),
@@ -74,30 +76,41 @@ public class AthleteController {
             athlete.gender(),
             athlete.identity(),
             athlete.height(),
-            athlete.weight()
+            athlete.weight(),
+                athlete.role()
         ));
     }
 
 
-    @PutMapping("/{id}")
-    public Athlete updateAthlete(
-        @PathVariable String id,
-        @RequestBody AthleteRequest updateAthlete
-    ){
-        return service.updateAthlete(id, updateAthlete);
+    @GetMapping("/internal/cpf/{cpf}")
+    public AthleteResponse findByCpfInternal(@PathVariable String cpf) {
+        return service.findMyProfile(cpf);
     }
 
-    @PatchMapping("/{id}")
+
+    @PutMapping("/athlete/me")
+    public Athlete updateAthlete(
+
+        @RequestBody AthleteRequest updateAthlete,
+        Authentication authentication
+    ){
+        String cpf = authentication.getName();
+        return service.updateAthlete(cpf, updateAthlete);
+    }
+
+    @PatchMapping("/athlete/me")
     public Athlete patchAthlete(
-        @PathVariable String id,
+            Authentication authentication,
         @RequestBody AthleteRequest patchAthlete
     ){
-        return service.pathAthlete(id, patchAthlete);
+        String cpf = authentication.getName();
+        return service.pathAthlete(cpf, patchAthlete);
     }
 
-    @DeleteMapping("/{id}")
-    public void deleteAhtlete(@PathVariable String id){
-        service.deleteAthlete(id);
+    @DeleteMapping("/athlete/me")
+    public void deleteAhtlete(Authentication authentication){
+        String cpf = authentication.getName();
+        service.deleteAthlete(cpf);
     }
 
 }

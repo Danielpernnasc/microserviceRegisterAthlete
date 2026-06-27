@@ -21,9 +21,8 @@ import com.trainday.bodybuilder.infra.security.JwtAuthFilter;
 
 @Configuration
 public class SecurityConfig {
-     private static final String ATHLETE_PATH = "/athlete/*";
+     private static final String ATHLETE_PATH = "/athlete/me";
      private static final String ATHLETE = "/athlete";
-     private static final String ATHLETE_PATCH_CPF = "/athlete/**";
      private static final String AUTH = "/auth/*";
      private static final String HEALTYHISTORY = "/HealtyHistory";
      private static final String HEALTYHISTORY_PATH = "/HealtyHistory/**";
@@ -54,20 +53,40 @@ public class SecurityConfig {
                     .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                    .authorizeHttpRequests(auth -> auth
                            .requestMatchers(HttpMethod.POST,  HEALTYHISTORY ).permitAll()
-                           .requestMatchers(HttpMethod.GET, HEALTYHISTORY_PATH).authenticated()
+                           .requestMatchers(HttpMethod.GET, HEALTYHISTORY_PATH).hasRole("ATHLETE")
                            .requestMatchers(HttpMethod.PUT, HEALTYHISTORY_PATH).authenticated()
                            .requestMatchers(HttpMethod.PATCH, HEALTYHISTORY_PATH).authenticated()
                     .requestMatchers(HttpMethod.POST, AUTH).permitAll()
                     .requestMatchers(HttpMethod.POST, AUTH).permitAll()
-                   .requestMatchers(HttpMethod.GET, ATHLETE_PATH).authenticated()
-                   .requestMatchers(HttpMethod.PUT, ATHLETE_PATH).authenticated()
-                   .requestMatchers(HttpMethod.DELETE, ATHLETE_PATH).authenticated()
-                   .requestMatchers(HttpMethod.PATCH, ATHLETE_PATH).authenticated()
-                   .requestMatchers(HttpMethod.GET, ATHLETE_PATCH_CPF).permitAll()
-                   .requestMatchers(HttpMethod.POST, ATHLETE).authenticated()
+//                   .requestMatchers(HttpMethod.GET, ATHLETE_PATH).authenticated()
+
+                           //For Professionals
+                           .requestMatchers(HttpMethod.GET, "/athlete/internal/**").hasAnyRole(
+                                   "PERSONAL_TRAINER",
+                                   "DOCTOR",
+                                   "NUTRITIONIST",
+                                   "LAB_TECHNIC",
+                                   "ADMIN"
+
+                   )
+//                           .requestMatchers(HttpMethod.GET, "/athlete/internal/**")
+//                           .permitAll()
+                                   .requestMatchers(HttpMethod.POST, ATHLETE).hasRole("ATHLETE")
+                                   .requestMatchers(HttpMethod.GET, ATHLETE_PATH )
+                                   .hasRole("ATHLETE")
+
+                                   .requestMatchers(HttpMethod.PUT, ATHLETE_PATH )
+                                   .hasRole("ATHLETE")
+
+                                   .requestMatchers(HttpMethod.PATCH, ATHLETE_PATH )
+                                   .hasRole("ATHLETE")
+
+                                   .requestMatchers(HttpMethod.DELETE, ATHLETE_PATH )
+                                   .hasRole("ATHLETE")
 
 
                     .anyRequest().authenticated()
+
                 )
 
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)

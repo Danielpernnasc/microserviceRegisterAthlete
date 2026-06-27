@@ -52,12 +52,14 @@ public class LoginService {
         login.setEmail(registerRequest.email());
         login.setBorn(registerRequest.born());
         login.setPassword(passwordEncoder.encode(registerRequest.password()));
+        login.setRole(registerRequest.role());
          Login saved = loginRepository.save(login);
         return new LoginResponse(
           saved.getId(),
           saved.getEmail(),
                 saved.getCpf(),
-                saved.getBorn()
+                saved.getBorn(),
+                saved.getRole()
         );
 
 

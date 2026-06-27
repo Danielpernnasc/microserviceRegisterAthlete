@@ -22,13 +22,19 @@ public enum Role {
     }
 
     @JsonCreator
-    public static Role formValue(String value){
-        for (Role g : Role.values()) {
-            if (g.state.equalsIgnoreCase(value)){
-                return g;
+    public static Role fromValue(String value) {
+
+        for (Role role : Role.values()) {
+
+            if (role.name().equalsIgnoreCase(value)) {
+                return role;
+            }
+
+            if (role.getState().equalsIgnoreCase(value)) {
+                return role;
             }
         }
 
-        throw new IllegalArgumentException("Identity invalid: " + value);
+        throw new IllegalArgumentException("Role inválida: " + value);
     }
 }

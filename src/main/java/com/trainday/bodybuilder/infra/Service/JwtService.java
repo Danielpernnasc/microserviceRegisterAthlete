@@ -59,12 +59,7 @@ public class JwtService{
     }
 
     public String extractSubject(String token){
-        return Jwts.parserBuilder()
-                .setSigningKey(getKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
+        return extractAllClaims(token).getSubject();
     }
 
     public boolean isTokenValid(String token){
@@ -77,13 +72,16 @@ public class JwtService{
         }
     }
 
-    public String extractUsername(String token) {
-          return Jwts.parserBuilder()
-                   .setSigningKey(getKey())
-                    .build()
-                    .parseClaimsJws(token)
-                    .getBody()
-                    .getSubject();
+    public String extractRole(String token) {
+        return extractAllClaims(token).get("role", String.class);
+    }
+
+    private Claims extractAllClaims(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(getKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 
 

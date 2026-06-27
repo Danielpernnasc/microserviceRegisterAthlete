@@ -1,5 +1,6 @@
 package com.trainday.bodybuilder.domain.model;
 
+import com.trainday.bodybuilder.domain.model.enums.Role;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -27,5 +28,6 @@ public class Login {
     private String email;
     private LocalDate born;
     private String password;
+    private Role role;
 
 }

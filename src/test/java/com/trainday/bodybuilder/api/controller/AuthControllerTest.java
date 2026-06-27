@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.util.Map;
 
 import com.trainday.bodybuilder.api.DTO.request.RegisterRequest;
+import com.trainday.bodybuilder.domain.model.enums.Role;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -37,7 +38,8 @@ public class AuthControllerTest {
                 "999.999.999-99",
                 LocalDate.of(2000,01,01),
                 "dpericles6@gmail.com",
-                "123456"
+                "123456",
+                Role.ATHLETE
         );
 
 
