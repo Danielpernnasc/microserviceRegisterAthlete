@@ -38,9 +38,6 @@ public class AthleteService {
     }
 
     public Athlete createAthlete(AthleteRequest reqAthlete, String athleteId){
-
-        System.out.println("ATHLETE ID = " + athleteId);
-
         Login user = loginRepository.findByCpf(athleteId)
                 .orElseThrow(() -> new RuntimeException(ATHLETE_NOT_FOUND));
 
