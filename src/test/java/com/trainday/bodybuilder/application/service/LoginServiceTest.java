@@ -71,7 +71,7 @@ public class LoginServiceTest {
         assertNotNull(service);
         assertEquals("id-user", service.id());
         assertEquals("athlete@host.com", service.email());
-
+        assertEquals(Role.ATHLETE, service.role());
         verify(passwordEncoder).encode("123456");
         verify(loginrepository).save(any(Login.class));
 
