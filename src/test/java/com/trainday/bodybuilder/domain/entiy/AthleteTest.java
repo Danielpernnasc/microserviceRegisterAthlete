@@ -22,7 +22,7 @@ public class AthleteTest {
             "Daniel Péricles do Nascimento",
             null,
             "dpericles6@gmail.com",
-            LocalDate.of(2000,01,01),
+            LocalDate.of(2000,1,1),
             Gender.MALE,
             GenderIdentity.CISGENDER,
             1.82,
@@ -54,7 +54,7 @@ public class AthleteTest {
         athlete.setName("Teste");
         athlete.setSocialname(null);
         athlete.setEmail("teste@email.com");
-        athlete.setBorn(LocalDate.of(2000, 01,01));
+        athlete.setBorn(LocalDate.of(2000, 1,1));
         athlete.setGender(Gender.MALE);
         athlete.setIdentity(GenderIdentity.CISGENDER);
         athlete.setHeight(1.75);
@@ -67,7 +67,7 @@ public class AthleteTest {
         assertEquals("Teste", athlete.getName());
         assertEquals(null, athlete.getSocialname());
         assertEquals("teste@email.com", athlete.getEmail());
-        assertEquals(LocalDate.of(2000,01,01), athlete.getBorn());
+        assertEquals(LocalDate.of(2000,1,1), athlete.getBorn());
         assertEquals(Gender.MALE, athlete.getGender());
         assertEquals(GenderIdentity.CISGENDER, athlete.getIdentity());
         assertEquals(1.75, athlete.getHeight());

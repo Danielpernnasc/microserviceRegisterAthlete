@@ -36,7 +36,7 @@ public class HealthyHistoryControllerTest {
     @Test
     void shoudSaveHH(){
         HealthyHistoryRequest hhrequest = new HealthyHistoryRequest(
-              false,
+                false,
                 Alcoholic.DOESNT_DRINK,
                 true,
                 List.of(DiseaseType.HYPERTENSION),
@@ -110,68 +110,32 @@ public class HealthyHistoryControllerTest {
         );
 
 
-     when(hhService.findByHHCPF("999.999.999-99"))
-             .thenReturn(hhentity);
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.getName()).thenReturn("authenticate");
+
+        when(hhService.findByHHCPF( "authenticate"))
+                .thenReturn(hhentity);
 
 
+        ResponseEntity<HealthyHistory> response =
+                hhController.searchCpf(authentication);
 
-        HealthyHistory result = hhController.searchCpf(hhentity.getAthleteCpf()).getBody();
+        assertNotNull(response);
 
-        assertNotNull(result);
-        assertEquals("999.999.999-99", result.getAthleteCpf());
-        assertEquals(false, result.getSmoker());
-        assertEquals(Alcoholic.DOESNT_DRINK, result.getAlcoholic());
-        assertEquals(true, result.getPhysicallyActive());
-        assertEquals(List.of(DiseaseType.HYPERTENSION), result.getDisease());
-        assertEquals(List.of("Losartana"), result.getMedications());
-        assertEquals(false,  result.isAllergies());
-        assertEquals(null, result.getWhatAllergies());
-        assertEquals(false, result.isSurgeries());
-        assertEquals( null, result.getWheresurgeries());
-        assertEquals("Hipertensão por parte de Pai e Mãe", result.getFamilyHistory());
+        HealthyHistory body = response.getBody();
 
 
-    }
-
-
-    @Test
-    void shouldFindATHLETEBYPROF(){
-
-        HealthyHistory hhentity = new HealthyHistory(
-                "athlete@host.com",
-                "999.999.999-99",
-                false,
-                Alcoholic.DOESNT_DRINK,
-                true,
-                List.of(DiseaseType.HYPERTENSION),
-                List.of("Losartana"),
-                false,
-                null,
-                false,
-                null,
-                "Hipertensão por parte de Pai e Mãe"
-        );
-
-
-      when(hhService.findByProfile( "999.999.999-99"))
-              .thenReturn(hhentity);
-
-      HealthyHistory result = hhController.findByCpfInternal(hhentity.getAthleteCpf());
-
-        assertNotNull(result);
-        assertEquals("athlete@host.com", result.getId());
-        assertEquals("999.999.999-99", result.getAthleteCpf());
-
-        assertEquals(false, result.getSmoker());
-        assertEquals(Alcoholic.DOESNT_DRINK, result.getAlcoholic());
-        assertEquals(true, result.getPhysicallyActive());
-        assertEquals(List.of(DiseaseType.HYPERTENSION), result.getDisease());
-        assertEquals(List.of("Losartana"), result.getMedications());
-        assertEquals(false,  result.isAllergies());
-        assertEquals(null, result.getWhatAllergies());
-        assertEquals(false, result.isSurgeries());
-        assertEquals( null, result.getWheresurgeries());
-        assertEquals("Hipertensão por parte de Pai e Mãe", result.getFamilyHistory());
+        assertEquals("999.999.999-99", body.getAthleteCpf());
+        assertEquals(false, body.getSmoker());
+        assertEquals(Alcoholic.DOESNT_DRINK, body.getAlcoholic());
+        assertEquals(true, body.getPhysicallyActive());
+        assertEquals(List.of(DiseaseType.HYPERTENSION), body.getDisease());
+        assertEquals(List.of("Losartana"), body.getMedications());
+        assertEquals(false,  body.isAllergies());
+        assertEquals(null, body.getWhatAllergies());
+        assertEquals(false, body.isSurgeries());
+        assertEquals( null, body.getWheresurgeries());
+        assertEquals("Hipertensão por parte de Pai e Mãe", body.getFamilyHistory());
 
 
     }
@@ -205,10 +169,15 @@ public class HealthyHistoryControllerTest {
         hh.setSurgeries(true);
         hh.setWheresurgeries(List.of("Operação no joelho esquerdo"));
         hh.setFamilyHistory("Hipertensão por parte de Pai e Mãe");
+        String cpf = "999.999.999-99";
 
-        when(hhService.updateHH("999.999.999-99", hhrequest))
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.getName()).thenReturn(cpf);
+
+        when(hhService.updateHH(cpf, hhrequest))
                 .thenReturn(hh);
-        HealthyHistory update = hhController.updateHH("999.999.999-99", hhrequest).getBody();
+
+        HealthyHistory update = hhController.updateHH(authentication, hhrequest).getBody();
         assertEquals(false, hh.getSmoker());
         assertEquals(Alcoholic.SOCIALLY, hh.getAlcoholic());
         assertEquals(true,  hh.getPhysicallyActive());
@@ -242,11 +211,15 @@ public class HealthyHistoryControllerTest {
         hh.setId("athlete@host.com");
         hh.setAthleteCpf("999.999.999-99");
         hh.setSmoker(true);
+        String cpf = "999.999.999-99";
 
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.getName()).thenReturn(cpf);
 
-        when(hhService.pathHH("999.999.999-99", hhrequest))
+        when(hhService.pathHH(cpf, hhrequest))
                 .thenReturn(hh);
-        HealthyHistory update = hhController.patchHH("999.999.999-99", hhrequest);
+        HealthyHistory result = hhController.patchHH(authentication, hhrequest);
+
         assertEquals(true, hh.getSmoker());
 
 

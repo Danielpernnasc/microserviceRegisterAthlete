@@ -36,7 +36,7 @@ public class AuthControllerTest {
     void shouldRegister(){
         RegisterRequest registerRequestreq = new RegisterRequest(
                 "999.999.999-99",
-                LocalDate.of(2000,01,01),
+                LocalDate.of(2000,1,1),
                 "dpericles6@gmail.com",
                 "123456",
                 Role.ATHLETE

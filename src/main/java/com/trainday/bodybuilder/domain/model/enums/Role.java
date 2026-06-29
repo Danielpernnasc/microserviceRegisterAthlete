@@ -16,6 +16,10 @@ public enum Role {
     Role(String state) {
         this.state = state;
     }
+
+    public static void values(String invalid) {
+    }
+
     @JsonValue
     public String getState() {
         return state;

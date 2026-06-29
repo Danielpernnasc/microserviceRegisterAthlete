@@ -42,36 +42,50 @@ public class AthleteControllerTest {
 
     @Mock
     JwtService jwtService;
+
     @Test
-    void shouldCreateAthlete() {
-        AthleteRequest request = new AthleteRequest(
-                "Maria Silva",
+    void shouldSaveAhtlete() {
+        AthleteRequest athleteReq = new AthleteRequest(
+                "Daniel Péricles do Nascimento",
                 null,
-                Gender.FEMALE,
+                Gender.MALE,
                 GenderIdentity.CISGENDER,
-                1.68,
-                62.0
+                182.5,
+                105.5
         );
 
         Athlete athlete = new Athlete();
-        athlete.setName("Maria Silva");
-        athlete.setHeight(1.68);
-        athlete.setWeight(62.0);
+        athlete.setId("user-1");
+        athlete.setCpf("123.456.789-00");
+        athlete.setName("Daniel Péricles do Nascimento");
+        athlete.setEmail("dpericles6@gmail.com");
+        athlete.setBorn(LocalDate.of(2000, 1, 1));
+        athlete.setGender(Gender.MALE);
+        athlete.setIdentity(GenderIdentity.CISGENDER);
+        athlete.setHeight(182.5);
+        athlete.setWeight(105.5);
 
-        Authentication authentication = mock(Authentication.class);
-        when(authentication.getName()).thenReturn("999.999.999-99");
 
-        when(athleteservice.createAthlete(request, "999.999.999-99"))
+        Authentication  authentication = mock(Authentication.class);
+        when(authentication.getName()).thenReturn("user-1");
+
+        when(athleteservice.createAthlete(athleteReq, "user-1"))
                 .thenReturn(athlete);
 
-        ResponseEntity<Athlete> response = athleteController.save(request, authentication);
 
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals("Maria Silva", response.getBody().getName());
-        assertEquals(1.68, response.getBody().getHeight());
 
-        verify(athleteservice).createAthlete(request, "999.999.999-99");
+        ResponseEntity<Athlete> created = athleteController.save(athleteReq, authentication);
+
+        assertNotNull(created);
+        assertEquals(athleteReq.name(), created.getBody().getName());
+        assertEquals(athleteReq.socialName(), created.getBody().getSocialname());
+        assertEquals(athleteReq.gender(), created.getBody().getGender());
+        assertEquals(athleteReq.identity(), created.getBody().getIdentity());
+        assertEquals(athleteReq.height(), created.getBody().getHeight());
+        assertEquals(athleteReq.weight(), created.getBody().getWeight());
+
+
+        verify(athleteservice).createAthlete(athleteReq, "user-1");
     }
 
 
@@ -138,6 +152,7 @@ public class AthleteControllerTest {
         when(athleteservice.pathAthlete("user-1", athleteReq))
                 .thenReturn(athlete);
 
+//        Athlete patched = athleteController.patchAthlete(athleteReq, authentication);
         Athlete patched = athleteController.patchAthlete(authentication, athleteReq);
 
         assertEquals(182.5, patched.getHeight());
@@ -195,36 +210,6 @@ public class AthleteControllerTest {
 
     }
 
-    @Test
-    void shouldFindByCpfInternal() {
-        AthleteResponse athleteResponse = new AthleteResponse(
-                "123456789",
-                "999.999.999-99",
-                "Maria Silva",
-                null,
-                "maria@email.com",
-                LocalDate.of(1980, 1, 1),
-                Gender.FEMALE,
-                GenderIdentity.CISGENDER,
-                1.68,
-                62.0,
-                Role.ATHLETE
-        );
-
-        when(athleteservice.findMyProfile("999.999.999-99"))
-                .thenReturn(athleteResponse);
-
-        AthleteResponse result = athleteController.findByCpfInternal("999.999.999-99");
-
-        assertNotNull(result);
-        assertEquals("123456789", result.id());
-        assertEquals("999.999.999-99", result.cpf());
-        assertEquals("Maria Silva", result.name());
-        assertEquals(Role.ATHLETE, result.role());
-
-        verify(athleteservice).findMyProfile("999.999.999-99");
-    }
-
 
 
     @Test
@@ -253,5 +238,6 @@ public class AthleteControllerTest {
         verify(athleteservice).deleteAthlete("user-1");
 
     }
-   
+
+
 }

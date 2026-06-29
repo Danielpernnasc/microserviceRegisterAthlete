@@ -26,6 +26,8 @@ public class SecurityConfig {
      private static final String AUTH = "/auth/*";
      private static final String HEALTYHISTORY = "/HealtyHistory";
      private static final String HEALTYHISTORY_PATH = "/HealtyHistory/**";
+     private static final String PROFESSIONAL_INTERNAL_ATHLETE = "/athlete/internal/**";
+     private static final String PROFESSIONAL_INTERNAL_HH = "/HealthyHistory/internal/**";
 
 
     private final JwtAuthFilter jwtAuthFilter;
@@ -54,21 +56,28 @@ public class SecurityConfig {
                    .authorizeHttpRequests(auth -> auth
                            .requestMatchers(HttpMethod.POST,  HEALTYHISTORY ).permitAll()
                            .requestMatchers(HttpMethod.GET, HEALTYHISTORY_PATH).hasRole("ATHLETE")
-                           .requestMatchers(HttpMethod.PUT, HEALTYHISTORY_PATH).authenticated()
-                           .requestMatchers(HttpMethod.PATCH, HEALTYHISTORY_PATH).authenticated()
+                           .requestMatchers(HttpMethod.PUT, HEALTYHISTORY_PATH).hasRole("ATHLETE")
                     .requestMatchers(HttpMethod.POST, AUTH).permitAll()
                     .requestMatchers(HttpMethod.POST, AUTH).permitAll()
 //                   .requestMatchers(HttpMethod.GET, ATHLETE_PATH).authenticated()
 
                            //For Professionals
-                           .requestMatchers(HttpMethod.GET, "/athlete/internal/**").hasAnyRole(
+                           .requestMatchers(HttpMethod.GET, PROFESSIONAL_INTERNAL_ATHLETE).hasAnyRole(
                                    "PERSONAL_TRAINER",
                                    "DOCTOR",
                                    "NUTRITIONIST",
                                    "LAB_TECHNIC",
                                    "ADMIN"
 
-                   )
+                           )
+                           .requestMatchers(HttpMethod.GET, PROFESSIONAL_INTERNAL_HH).hasAnyRole(
+                                           "PERSONAL_TRAINER",
+                                           "DOCTOR",
+                                           "NUTRITIONIST",
+                                           "LAB_TECHNIC",
+                                           "ADMIN"
+
+                                   )
 //                           .requestMatchers(HttpMethod.GET, "/athlete/internal/**")
 //                           .permitAll()
                                    .requestMatchers(HttpMethod.POST, ATHLETE).hasRole("ATHLETE")

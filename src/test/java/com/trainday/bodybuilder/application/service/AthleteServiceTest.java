@@ -84,7 +84,7 @@ public class AthleteServiceTest {
     void shouldThrowConflictWhenCpfAlreadyExists(){
         RegisterRequest registerReq = new RegisterRequest(
                 "999.999.999-99",
-                LocalDate.of(1980, 01, 01),
+                LocalDate.of(1980, 1, 1),
                 "athlete@host.com",
                 "000000",
                 Role.ATHLETE
@@ -132,7 +132,7 @@ public class AthleteServiceTest {
             "Maria Silva",
             null,
             "maria@email.com",
-                      LocalDate.of(2000, 01, 01),
+                      LocalDate.of(2000, 1, 1),
             Gender.FEMALE,
             GenderIdentity.CISGENDER,
             1.68,
@@ -212,7 +212,7 @@ public class AthleteServiceTest {
             existAthlete.setCpf("999.999.999-99");
             existAthlete.setName("Daniel Péricles do Nascimento");
             existAthlete.setSocialname(null);
-            existAthlete.setBorn(LocalDate.of(2000, 01, 01));
+            existAthlete.setBorn(LocalDate.of(2000, 1, 1));
             existAthlete.setEmail("dpericles6@gmail.com");
             existAthlete.setGender((Gender.FEMALE));
             existAthlete.setIdentity(GenderIdentity.CISGENDER);
@@ -316,7 +316,7 @@ public class AthleteServiceTest {
         existAthlete.setCpf("999.999.999-99");
         existAthlete.setName("Daniel Péricles do Nascimento");
         existAthlete.setSocialname(null);
-        existAthlete.setBorn(        LocalDate.of(2000, 01, 01));
+        existAthlete.setBorn(        LocalDate.of(2000, 1, 1));
         existAthlete.setGender(Gender.MALE);
         existAthlete.setIdentity(GenderIdentity.CISGENDER);
         existAthlete.setEmail("dpericles6@gmail.com");

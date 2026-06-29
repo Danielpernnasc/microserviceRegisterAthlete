@@ -68,7 +68,7 @@ public class AthleteService {
   
     }
 
-    public AthleteResponse findMyProfile(String cpf) {
+    public AthleteResponse  findMyProfile(String cpf) {
         Athlete athlete = athleterepository.findByCpf(cpf)
                 .orElseThrow(() -> new RuntimeException(ATHLETE_NOT_FOUND_ID + cpf));
 
