@@ -72,13 +72,13 @@ public class LoginService {
 
 
    public String authenticate(LoginRequest request) {
-       System.out.println("LOGIN RECEBIDO = " + request.login());
+
 
        Optional<Login> user = loginRepository.findByEmail(request.login());
-       System.out.println("ACHOU EMAIL = " + user.isPresent());
+
        if (user.isEmpty()) {
            user = loginRepository.findByCpf(request.login());
-           System.out.println("ACHOU CPF = " + user.isPresent());
+
        }
        Login login = user.orElseThrow(
                () -> new RuntimeException("Invalid login or password")
