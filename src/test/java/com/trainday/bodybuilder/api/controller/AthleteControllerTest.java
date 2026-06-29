@@ -59,7 +59,7 @@ public class AthleteControllerTest {
         athlete.setCpf("123.456.789-00");
         athlete.setName("Daniel Péricles do Nascimento");
         athlete.setEmail("dpericles6@gmail.com");
-        athlete.setBorn(LocalDate.of(2000, 01, 01));
+        athlete.setBorn(LocalDate.of(2000, 1, 1));
         athlete.setGender(Gender.MALE);
         athlete.setIdentity(GenderIdentity.CISGENDER);
         athlete.setHeight(182.5);
@@ -105,7 +105,7 @@ public class AthleteControllerTest {
         athlete.setName("Daniel Péricles do Nascimento");
         athlete.setSocialname(null);
         athlete.setEmail("dpericles6@gmail.com");
-        athlete.setBorn(      LocalDate.of(2000, 01, 01));
+        athlete.setBorn(      LocalDate.of(2000, 1, 1));
          athlete.setGender(Gender.MALE);
          athlete.setIdentity(GenderIdentity.CISGENDER);
         athlete.setHeight(182.5);
@@ -168,7 +168,7 @@ public class AthleteControllerTest {
                  "Daniel Péricles do Nascimento",
                  null,
                  "dpericles6@gmail.com",
-                 LocalDate.of(2000, 01, 01),
+                 LocalDate.of(2000, 1, 1),
                  Gender.MALE,
                  GenderIdentity.CISGENDER,
                  182.5,

@@ -43,7 +43,7 @@ public class HealthyHistoryServiceTest {
     void shouldCreateHH(){
         RegisterRequest registerRequest = new RegisterRequest(
                 "999.999.999-99",
-                LocalDate.of(1980, 01, 01),
+                LocalDate.of(1980, 1, 1),
                 "athlete@host.com",
                 "******",
                 Role.ATHLETE
@@ -93,7 +93,7 @@ public class HealthyHistoryServiceTest {
     void shouldThrowConflictWhenHHAlreadyExist(){
         RegisterRequest registerRequest = new RegisterRequest(
                 "999.999.999-99",
-                LocalDate.of(1980, 01, 01),
+                LocalDate.of(1980, 1, 1),
                 "athlete@host.com",
                 "******",
                 Role.ATHLETE

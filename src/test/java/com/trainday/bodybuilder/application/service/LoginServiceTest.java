@@ -52,7 +52,7 @@ public class LoginServiceTest {
         RegisterRequest request = new RegisterRequest(
 
             "999.999.999-99",
-                LocalDate.of(2000,01,01),
+                LocalDate.of(2000, 1,1),
             "athlete@host.com",
                 "123456",
                 Role.ATHLETE

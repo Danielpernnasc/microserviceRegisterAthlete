@@ -22,7 +22,7 @@ public class AthleteTest {
             "Daniel Péricles do Nascimento",
             null,
             "dpericles6@gmail.com",
-            LocalDate.of(2000,01,01),
+            LocalDate.of(2000,1,1),
             Gender.MALE,
             GenderIdentity.CISGENDER,
             1.82,

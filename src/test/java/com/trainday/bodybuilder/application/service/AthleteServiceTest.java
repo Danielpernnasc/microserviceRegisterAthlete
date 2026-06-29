@@ -45,7 +45,7 @@ public class AthleteServiceTest {
     void shouldcreateAhtlete(){
         RegisterRequest registerRequest = new RegisterRequest(
                 "999.999.999-99",
-                LocalDate.of(1980, 01, 01),
+                LocalDate.of(1980, 1, 1),
                 "athlete@host.com",
                 "******",
                 Role.ATHLETE
@@ -84,7 +84,7 @@ public class AthleteServiceTest {
     void shouldThrowConflictWhenCpfAlreadyExists(){
         RegisterRequest registerReq = new RegisterRequest(
                 "999.999.999-99",
-                LocalDate.of(1980, 01, 01),
+                LocalDate.of(1980, 1, 1),
                 "athlete@host.com",
                 "000000",
                 Role.ATHLETE
@@ -132,7 +132,7 @@ public class AthleteServiceTest {
             "Maria Silva",
             null,
             "maria@email.com",
-                      LocalDate.of(2000, 01, 01),
+                      LocalDate.of(2000, 1, 1),
             Gender.FEMALE,
             GenderIdentity.CISGENDER,
             1.68,
