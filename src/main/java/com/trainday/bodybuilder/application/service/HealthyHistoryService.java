@@ -18,7 +18,7 @@ import java.util.Optional;
 @Service
 public class HealthyHistoryService {
     private static final String ATHLETE_NOT_FOUND = "Athlete not found!";
-    private static final String HEALTY_HISTORY = "Healthy History not found";
+    private static final String HEALTY_HISTORY_NOT_FOUND = "Healthy History not found";
     private static final String STRING = "String";
     private static final String ALLERGIE_INFORMED = "Allergie(s) not informed, Request it to be informed!";
     private static final String SUGERIO_INFORMED = "Surgery(ies) not informed, Request it to be informed!";
@@ -75,12 +75,32 @@ public class HealthyHistoryService {
     public HealthyHistory findByHHCPF(String athleteCpf) {
         return hhrepository.findByAthleteCpf(athleteCpf)
                 .orElseThrow(() ->
-                        new RuntimeException(HEALTY_HISTORY));
+                        new RuntimeException(HEALTY_HISTORY_NOT_FOUND));
+
+    }
+
+    public HealthyHistory findByProfile(String cpf){
+        HealthyHistory hh = hhrepository.findByAthleteCpf(cpf)
+                .orElseThrow(() -> new RuntimeException(HEALTY_HISTORY_NOT_FOUND));
+        return new HealthyHistory(
+                hh.getId(),
+                hh.getAthleteCpf(),
+                hh.getSmoker(),
+                hh.getAlcoholic(),
+                hh.getPhysicallyActive(),
+                hh.getDisease(),
+                hh.getMedications(),
+                hh.isAllergies(),
+                hh.getWhatAllergies(),
+                hh.isSurgeries(),
+                hh.getWheresurgeries(),
+                hh.getFamilyHistory()
+        );
     }
 
     public HealthyHistory updateHH(String athleteCpf, HealthyHistoryUpdatePatchRequest updateHH)  {
         HealthyHistory existHH = hhrepository.findByAthleteCpf(athleteCpf)
-                .orElseThrow(() -> new RuntimeException(HEALTY_HISTORY));
+                .orElseThrow(() -> new RuntimeException(HEALTY_HISTORY_NOT_FOUND));
 
         Optional.ofNullable(updateHH.smoker())
                 .ifPresent(existHH::setSmoker);
@@ -123,7 +143,7 @@ public class HealthyHistoryService {
 
     public HealthyHistory pathHH(String athleteCpf, HealthyHistoryUpdatePatchRequest req){
         HealthyHistory hh = hhrepository.findByAthleteCpf(athleteCpf)
-                .orElseThrow(() -> new RuntimeException(HEALTY_HISTORY));
+                .orElseThrow(() -> new RuntimeException(HEALTY_HISTORY_NOT_FOUND));
 
         if(req.smoker() != null){
             hh.setSmoker(req.smoker());
