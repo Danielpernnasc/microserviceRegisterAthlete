@@ -67,7 +67,6 @@ public class AthleteControllerTest {
 
 
         Authentication  authentication = mock(Authentication.class);
-
         when(authentication.getName()).thenReturn("user-1");
      
         when(athleteservice.createAthlete(athleteReq, "user-1"))
@@ -112,9 +111,13 @@ public class AthleteControllerTest {
         athlete.setHeight(182.5);
         athlete.setWeight(105.5);
 
-        when(athleteservice.updateAthlete("1", athleteReq))
+        Authentication  authentication = mock(Authentication.class);
+
+        when(authentication.getName()).thenReturn("user-1");
+
+        when(athleteservice.updateAthlete("user-1", athleteReq))
             .thenReturn(athlete);
-        Athlete updated = athleteController.updateAthlete("1", athleteReq);
+        Athlete updated = athleteController.updateAthlete(athleteReq, authentication);
         
 
         assertNotNull(updated);
@@ -124,7 +127,7 @@ public class AthleteControllerTest {
         assertEquals(182.5, athleteReq.height());
         assertEquals(105.5, athleteReq.weight());
         
-        verify(athleteservice).updateAthlete("1",athleteReq);
+        verify(athleteservice).updateAthlete("user-1" ,athleteReq);
 
     }
 
@@ -143,14 +146,17 @@ public class AthleteControllerTest {
         athlete.setHeight(182.5);
 
 
-        when(athleteservice.pathAthlete("1", athleteReq))
+        Authentication  authentication = mock(Authentication.class);
+
+        when(authentication.getName()).thenReturn("user-1");
+        when(athleteservice.pathAthlete("user-1", athleteReq))
         .thenReturn(athlete);
 
-    Athlete patch = athleteController.patchAthlete("1", athleteReq);
+        Athlete patched = athleteController.patchAthlete(athleteReq, authentication);
+
+        assertEquals(182.5, patched.getHeight());
 
 
-        assertNotNull(patch);
-        assertEquals(182.5, athlete.getHeight());
 
     }
 
@@ -166,15 +172,21 @@ public class AthleteControllerTest {
                  Gender.MALE,
                  GenderIdentity.CISGENDER,
                  182.5,
-                 105.5
+                 105.5,
+                 Role.ATHLETE
          );
 
+        Authentication  authentication = mock(Authentication.class);
 
-        when(athleteservice.findbyCpf("123.456.789-00"))
+        when(authentication.getName()).thenReturn("user-1");
+
+
+        when(athleteservice.findMyProfile("user-1"))
                 .thenReturn(athlete);
 
+
         ResponseEntity<AthleteResponse> result =
-            athleteController.findByCpf("123.456.789-00");
+            athleteController.findByCpf(authentication);
 
         assertNotNull(result);
         assertEquals(HttpStatus.OK, result.getStatusCode());
@@ -193,7 +205,7 @@ public class AthleteControllerTest {
         assertEquals(105.5, body.weight());
 
 
-        verify(athleteservice).findbyCpf("123.456.789-00");
+        verify(athleteservice).findMyProfile("user-1");
 
     }
 
@@ -213,13 +225,16 @@ public class AthleteControllerTest {
             existAthlete.setWeight(105.10);
             existAthlete.setRole(Role.ATHLETE);
 
-    
 
-          doNothing().when(athleteservice).deleteAthlete("1");
-          
-          athleteController.deleteAhtlete("1");
 
-          verify(athleteservice).deleteAthlete("1");
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.getName()).thenReturn("user-1");
+
+        doNothing().when(athleteservice).deleteAthlete("user-1");
+        athleteController.deleteAhtlete(authentication);
+
+
+        verify(athleteservice).deleteAthlete("user-1");
 
     }
    

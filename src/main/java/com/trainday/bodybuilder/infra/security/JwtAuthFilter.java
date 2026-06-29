@@ -8,6 +8,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -70,6 +71,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             String login = jwtService.extractSubject(token);
             System.out.println("LOGIN = " + login);
             String role = jwtService.extractRole(token);
+
+            UserDetails userDetails = userDetailsService.loadUserByUsername(login);
 
             System.out.println("LOGIN = " + login);
             System.out.println("ROLE = " + role);

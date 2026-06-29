@@ -22,8 +22,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 @RestController
@@ -100,9 +98,9 @@ public class AthleteController {
 
     @PatchMapping("/athlete/me")
     public Athlete patchAthlete(
-            Authentication authentication,
-        @RequestBody AthleteRequest patchAthlete
-    ){
+            @RequestBody AthleteRequest patchAthlete,
+            Authentication authentication
+            ){
         String cpf = authentication.getName();
         return service.pathAthlete(cpf, patchAthlete);
     }

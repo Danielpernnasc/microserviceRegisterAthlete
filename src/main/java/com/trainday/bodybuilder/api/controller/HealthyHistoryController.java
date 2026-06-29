@@ -2,7 +2,6 @@ package com.trainday.bodybuilder.api.controller;
 
 import com.trainday.bodybuilder.api.DTO.request.HealthyHistoryRequest;
 import com.trainday.bodybuilder.api.DTO.request.HealthyHistoryUpdatePatchRequest;
-import com.trainday.bodybuilder.api.DTO.response.AthleteResponse;
 import com.trainday.bodybuilder.application.service.HealthyHistoryService;
 import com.trainday.bodybuilder.domain.model.HealthyHistory;
 import org.springframework.http.HttpStatus;
