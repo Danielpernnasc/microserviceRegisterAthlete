@@ -85,6 +85,7 @@ public class LoginServiceTest {
         user.setEmail("athlete@host.com");
         user.setCpf("999.999.999-99");
         user.setPassword("123456");
+        user.setRole(Role.ATHLETE);
 
         Athlete athlete = new Athlete();
         athlete.setId("athlete123");
