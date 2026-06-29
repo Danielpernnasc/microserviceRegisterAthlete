@@ -47,7 +47,8 @@ public class AuthControllerTest {
               "user-1",
               "dpericles6@gmail.com",
                 "999.999.999-99",
-                LocalDate.of(2000,01,01)
+                LocalDate.of(2000,1,1),
+                Role.ATHLETE
 
         );
 

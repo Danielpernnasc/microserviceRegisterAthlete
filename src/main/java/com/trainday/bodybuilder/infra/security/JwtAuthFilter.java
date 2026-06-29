@@ -8,6 +8,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -63,16 +64,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         boolean validToken = jwtService.isTokenValid(token);
 
-        System.out.println("AUTH HEADER = " + authHeader);
         if (validToken) {
-            System.out.println("TOKEN VÁLIDO");
 
             String login = jwtService.extractSubject(token);
-            System.out.println("LOGIN = " + login);
-            String role = jwtService.extractRole(token);
 
-            System.out.println("LOGIN = " + login);
-            System.out.println("ROLE = " + role);
+            String role = jwtService.extractRole(token);
+            UserDetails userDetails = userDetailsService.loadUserByUsername(login);
 
             UsernamePasswordAuthenticationToken auth =
                     new UsernamePasswordAuthenticationToken(
@@ -82,15 +79,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     );
 
             SecurityContextHolder.getContext().setAuthentication(auth);
-            System.out.println("AUTENTICADO = "
-                    + SecurityContextHolder.getContext().getAuthentication());
-
-            System.out.println("AUTHORITIES = "
-                    + SecurityContextHolder.getContext()
-                    .getAuthentication()
-                    .getAuthorities());
-        }else {
-            System.out.println("TOKEN INVÁLIDO");
         }
             filterChain.doFilter(request, response);
         }

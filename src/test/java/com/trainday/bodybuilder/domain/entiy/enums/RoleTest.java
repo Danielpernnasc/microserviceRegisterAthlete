@@ -9,28 +9,27 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class RoleTest {
     @Test
     void shouldReturnRole_whenValidValue(){
-        Role resultAdmin = Role.formValue("ADMIN");
-        Role resultDoctor = Role.formValue("MÉDICO");
-        Role resultPersTra = Role.formValue("EDUCADOR_FISICO");
-        Role resultNutr = Role.formValue("NUTRICIONISTA");
-        Role resultLTec = Role.formValue("TEC_LAB");
-        Role resultAth = Role.formValue("ATLETA");
+        Role resultAdmin   = Role.fromValue("ADMIN");
+        Role resultDoctor  = Role.fromValue("MÉDICO");
+        Role resultPersTra = Role.fromValue("EDUCADOR_FISICO");
+        Role resultNutr    = Role.fromValue("NUTRICIONISTA");
+        Role resultLTec    = Role.fromValue("TEC_LAB");
+        Role resultAth     = Role.fromValue("ATLETA");
 
-        assertEquals(Role.ADMIN, resultAdmin);
-        assertEquals(Role.DOCTOR, resultDoctor);
-        assertEquals(Role.DOCTOR, resultDoctor);
+        assertEquals(Role.ADMIN,            resultAdmin);
+        assertEquals(Role.DOCTOR,           resultDoctor);
         assertEquals(Role.PERSONAL_TRAINER, resultPersTra);
-        assertEquals(Role.NUTRITIONIST, resultNutr);
-        assertEquals(Role.LAB_TECHNIC, resultLTec);
-        assertEquals(Role.ATHLETE, resultAth);
+        assertEquals(Role.NUTRITIONIST,     resultNutr);
+        assertEquals(Role.LAB_TECHNIC,      resultLTec);
+        assertEquals(Role.ATHLETE,          resultAth);
     }
 
     @Test
-    void shouldThrowException_whenInvalidValue(){
+    void shouldThrowException_whenInvalidValue() {
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            Role.formValue("invalid");
+            Role.fromValue("invalid"); // ← valor inválido que vai lançar a exceção
         });
-        assertEquals("Identity invalid: invalid", exception.getMessage());
+        assertEquals("Role inválida: invalid", exception.getMessage());
     }
 
     @Test
@@ -38,5 +37,4 @@ public class RoleTest {
         String result = Role.ATHLETE.getState();
         assertEquals("ATLETA", result);
     }
-
 }

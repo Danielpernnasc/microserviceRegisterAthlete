@@ -48,7 +48,7 @@ public class AthleteController {
         @RequestBody AthleteRequest req,
         Authentication authentication
     ) {
-      System.out.println("CHEGOU NO CONTROLLER");
+
         String athleteId = authentication.getName();
 
         Athlete createdAthlete = service.createAthlete(req, athleteId);

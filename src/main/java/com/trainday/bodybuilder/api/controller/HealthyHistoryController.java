@@ -37,6 +37,11 @@ public class HealthyHistoryController {
        return ResponseEntity.ok(hhservice.findByHHCPF(athleteCpf));
    }
 
+    @GetMapping("/internal/cpf/{cpf}")
+    public HealthyHistory findByCpfInternal(@PathVariable String cpf) {
+        return hhservice.findByProfile(cpf);
+    }
+
    @PutMapping("/cpf/{athleteCpf}")
     public ResponseEntity<HealthyHistory> updateHH(
             @PathVariable String athleteCpf,

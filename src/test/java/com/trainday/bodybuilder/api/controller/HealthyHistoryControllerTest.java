@@ -117,8 +117,51 @@ public class HealthyHistoryControllerTest {
 
         HealthyHistory result = hhController.searchCpf(hhentity.getAthleteCpf()).getBody();
 
-
+        assertNotNull(result);
         assertEquals("999.999.999-99", result.getAthleteCpf());
+        assertEquals(false, result.getSmoker());
+        assertEquals(Alcoholic.DOESNT_DRINK, result.getAlcoholic());
+        assertEquals(true, result.getPhysicallyActive());
+        assertEquals(List.of(DiseaseType.HYPERTENSION), result.getDisease());
+        assertEquals(List.of("Losartana"), result.getMedications());
+        assertEquals(false,  result.isAllergies());
+        assertEquals(null, result.getWhatAllergies());
+        assertEquals(false, result.isSurgeries());
+        assertEquals( null, result.getWheresurgeries());
+        assertEquals("Hipertensão por parte de Pai e Mãe", result.getFamilyHistory());
+
+
+    }
+
+
+    @Test
+    void shouldFindATHLETEBYPROF(){
+
+        HealthyHistory hhentity = new HealthyHistory(
+                "athlete@host.com",
+                "999.999.999-99",
+                false,
+                Alcoholic.DOESNT_DRINK,
+                true,
+                List.of(DiseaseType.HYPERTENSION),
+                List.of("Losartana"),
+                false,
+                null,
+                false,
+                null,
+                "Hipertensão por parte de Pai e Mãe"
+        );
+
+
+      when(hhService.findByProfile( "999.999.999-99"))
+              .thenReturn(hhentity);
+
+      HealthyHistory result = hhController.findByCpfInternal(hhentity.getAthleteCpf());
+
+        assertNotNull(result);
+        assertEquals("athlete@host.com", result.getId());
+        assertEquals("999.999.999-99", result.getAthleteCpf());
+
         assertEquals(false, result.getSmoker());
         assertEquals(Alcoholic.DOESNT_DRINK, result.getAlcoholic());
         assertEquals(true, result.getPhysicallyActive());

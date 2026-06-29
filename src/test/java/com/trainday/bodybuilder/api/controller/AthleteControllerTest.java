@@ -42,63 +42,48 @@ public class AthleteControllerTest {
 
     @Mock
     JwtService jwtService;
-
     @Test
-    void shouldSaveAhtlete() {
-        AthleteRequest athleteReq = new AthleteRequest(
-            "Daniel Péricles do Nascimento",
-            null,
-            Gender.MALE,
-            GenderIdentity.CISGENDER,
-            182.5,
-            105.5
+    void shouldCreateAthlete() {
+        AthleteRequest request = new AthleteRequest(
+                "Maria Silva",
+                null,
+                Gender.FEMALE,
+                GenderIdentity.CISGENDER,
+                1.68,
+                62.0
         );
 
         Athlete athlete = new Athlete();
-        athlete.setId("user-1");
-        athlete.setCpf("123.456.789-00");
-        athlete.setName("Daniel Péricles do Nascimento");
-        athlete.setEmail("dpericles6@gmail.com");
-        athlete.setBorn(LocalDate.of(2000, 01, 01));
-        athlete.setGender(Gender.MALE);
-        athlete.setIdentity(GenderIdentity.CISGENDER);
-        athlete.setHeight(182.5);
-        athlete.setWeight(105.5);
+        athlete.setName("Maria Silva");
+        athlete.setHeight(1.68);
+        athlete.setWeight(62.0);
 
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.getName()).thenReturn("999.999.999-99");
 
-        Authentication  authentication = mock(Authentication.class);
+        when(athleteservice.createAthlete(request, "999.999.999-99"))
+                .thenReturn(athlete);
 
-        when(authentication.getName()).thenReturn("user-1");
-     
-        when(athleteservice.createAthlete(athleteReq, "user-1"))
-            .thenReturn(athlete);
+        ResponseEntity<Athlete> response = athleteController.save(request, authentication);
 
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals("Maria Silva", response.getBody().getName());
+        assertEquals(1.68, response.getBody().getHeight());
 
-
-        ResponseEntity<Athlete> created = athleteController.save(athleteReq, authentication);
-
-        assertNotNull(created);
-        assertEquals(athleteReq.name(), created.getBody().getName());
-        assertEquals(athleteReq.socialName(), created.getBody().getSocialname());
-        assertEquals(athleteReq.gender(), created.getBody().getGender());
-        assertEquals(athleteReq.identity(), created.getBody().getIdentity());
-        assertEquals(athleteReq.height(), created.getBody().getHeight());
-        assertEquals(athleteReq.weight(), created.getBody().getWeight());
-
-
-        verify(athleteservice).createAthlete(athleteReq, "user-1");
+        verify(athleteservice).createAthlete(request, "999.999.999-99");
     }
 
 
     @Test
     void shouldUpdateAthlete(){
         AthleteRequest athleteReq = new AthleteRequest(
-            "Daniel Péricles do Nascimento",
-            null,
-            Gender.MALE,
-            GenderIdentity.CISGENDER,
-            182.5,
-            105.5
+                "Daniel Péricles do Nascimento",
+                null,
+                Gender.MALE,
+                GenderIdentity.CISGENDER,
+                182.5,
+                105.5
         );
 
         Athlete athlete = new Athlete();
@@ -106,16 +91,20 @@ public class AthleteControllerTest {
         athlete.setName("Daniel Péricles do Nascimento");
         athlete.setSocialname(null);
         athlete.setEmail("dpericles6@gmail.com");
-        athlete.setBorn(      LocalDate.of(2000, 01, 01));
-         athlete.setGender(Gender.MALE);
-         athlete.setIdentity(GenderIdentity.CISGENDER);
+        athlete.setBorn(      LocalDate.of(2000, 1, 1));
+        athlete.setGender(Gender.MALE);
+        athlete.setIdentity(GenderIdentity.CISGENDER);
         athlete.setHeight(182.5);
         athlete.setWeight(105.5);
 
-        when(athleteservice.updateAthlete("1", athleteReq))
-            .thenReturn(athlete);
-        Athlete updated = athleteController.updateAthlete("1", athleteReq);
-        
+        Authentication  authentication = mock(Authentication.class);
+
+        when(authentication.getName()).thenReturn("user-1");
+
+        when(athleteservice.updateAthlete("user-1", athleteReq))
+                .thenReturn(athlete);
+        Athlete updated = athleteController.updateAthlete(athleteReq, authentication);
+
 
         assertNotNull(updated);
         assertEquals("Daniel Péricles do Nascimento", athleteReq.name());
@@ -123,64 +112,73 @@ public class AthleteControllerTest {
         assertEquals(GenderIdentity.CISGENDER, athleteReq.identity());
         assertEquals(182.5, athleteReq.height());
         assertEquals(105.5, athleteReq.weight());
-        
-        verify(athleteservice).updateAthlete("1",athleteReq);
+
+        verify(athleteservice).updateAthlete("user-1" ,athleteReq);
 
     }
 
     @Test
     void shouldPatchAtlhete(){
 
-          AthleteRequest athleteReq = new AthleteRequest(
-            "Daniel Péricles do Nascimento",
-            null,
-            Gender.MALE,
-            GenderIdentity.CISGENDER,
-            107.5,
-            107.5
+        AthleteRequest athleteReq = new AthleteRequest(
+                "Daniel Péricles do Nascimento",
+                null,
+                Gender.MALE,
+                GenderIdentity.CISGENDER,
+                107.5,
+                107.5
         );
         Athlete athlete = new Athlete();
         athlete.setHeight(182.5);
 
 
-        when(athleteservice.pathAthlete("1", athleteReq))
-        .thenReturn(athlete);
+        Authentication  authentication = mock(Authentication.class);
 
-    Athlete patch = athleteController.patchAthlete("1", athleteReq);
+        when(authentication.getName()).thenReturn("user-1");
+        when(athleteservice.pathAthlete("user-1", athleteReq))
+                .thenReturn(athlete);
+
+        Athlete patched = athleteController.patchAthlete(authentication, athleteReq);
+
+        assertEquals(182.5, patched.getHeight());
 
 
-        assertNotNull(patch);
-        assertEquals(182.5, athlete.getHeight());
 
     }
 
     @Test
     void shouldFindByCpf(){
-         AthleteResponse athlete = new AthleteResponse(
-                 "123456789",
-                 "123.456.789-00",
-                 "Daniel Péricles do Nascimento",
-                 null,
-                 "dpericles6@gmail.com",
-                 LocalDate.of(2000, 01, 01),
-                 Gender.MALE,
-                 GenderIdentity.CISGENDER,
-                 182.5,
-                 105.5
-         );
+        AthleteResponse athlete = new AthleteResponse(
+                "123456789",
+                "123.456.789-00",
+                "Daniel Péricles do Nascimento",
+                null,
+                "dpericles6@gmail.com",
+                LocalDate.of(2000, 1, 1),
+                Gender.MALE,
+                GenderIdentity.CISGENDER,
+                182.5,
+                105.5,
+                Role.ATHLETE
+        );
+
+        Authentication  authentication = mock(Authentication.class);
+
+        when(authentication.getName()).thenReturn("user-1");
 
 
-        when(athleteservice.findbyCpf("123.456.789-00"))
+        when(athleteservice.findMyProfile("user-1"))
                 .thenReturn(athlete);
 
+
         ResponseEntity<AthleteResponse> result =
-            athleteController.findByCpf("123.456.789-00");
+                athleteController.findByCpf(authentication);
 
         assertNotNull(result);
         assertEquals(HttpStatus.OK, result.getStatusCode());
 
         AthleteResponse body = result.getBody();
-    
+
         assertNotNull(body);
         assertEquals("123456789", body.id());
         assertEquals("Daniel Péricles do Nascimento", body.name());
@@ -193,33 +191,66 @@ public class AthleteControllerTest {
         assertEquals(105.5, body.weight());
 
 
-        verify(athleteservice).findbyCpf("123.456.789-00");
+        verify(athleteservice).findMyProfile("user-1");
 
+    }
+
+    @Test
+    void shouldFindByCpfInternal() {
+        AthleteResponse athleteResponse = new AthleteResponse(
+                "123456789",
+                "999.999.999-99",
+                "Maria Silva",
+                null,
+                "maria@email.com",
+                LocalDate.of(1980, 1, 1),
+                Gender.FEMALE,
+                GenderIdentity.CISGENDER,
+                1.68,
+                62.0,
+                Role.ATHLETE
+        );
+
+        when(athleteservice.findMyProfile("999.999.999-99"))
+                .thenReturn(athleteResponse);
+
+        AthleteResponse result = athleteController.findByCpfInternal("999.999.999-99");
+
+        assertNotNull(result);
+        assertEquals("123456789", result.id());
+        assertEquals("999.999.999-99", result.cpf());
+        assertEquals("Maria Silva", result.name());
+        assertEquals(Role.ATHLETE, result.role());
+
+        verify(athleteservice).findMyProfile("999.999.999-99");
     }
 
 
 
     @Test
     void shouldDeleteAthlete(){
-          Athlete existAthlete = new Athlete();
-            existAthlete.setId("1");
-            existAthlete.setCpf("999.999.999-99");
-            existAthlete.setName("Daniel Péricles do Nascimento");
-            existAthlete.setBorn(LocalDate.of(2000, 01, 01));
-            existAthlete.setGender(Gender.MALE);
-            existAthlete.setIdentity(GenderIdentity.CISGENDER);
-            existAthlete.setEmail("dpericles6@gmail.com");
-            existAthlete.setHeight(181.90);
-            existAthlete.setWeight(105.10);
-            existAthlete.setRole(Role.ATHLETE);
+        Athlete existAthlete = new Athlete();
+        existAthlete.setId("1");
+        existAthlete.setCpf("999.999.999-99");
+        existAthlete.setName("Daniel Péricles do Nascimento");
+        existAthlete.setBorn(LocalDate.of(2000, 01, 01));
+        existAthlete.setGender(Gender.MALE);
+        existAthlete.setIdentity(GenderIdentity.CISGENDER);
+        existAthlete.setEmail("dpericles6@gmail.com");
+        existAthlete.setHeight(181.90);
+        existAthlete.setWeight(105.10);
+        existAthlete.setRole(Role.ATHLETE);
 
-    
 
-          doNothing().when(athleteservice).deleteAthlete("1");
-          
-          athleteController.deleteAhtlete("1");
 
-          verify(athleteservice).deleteAthlete("1");
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.getName()).thenReturn("user-1");
+
+        doNothing().when(athleteservice).deleteAthlete("user-1");
+        athleteController.deleteAhtlete(authentication);
+
+
+        verify(athleteservice).deleteAthlete("user-1");
 
     }
    
