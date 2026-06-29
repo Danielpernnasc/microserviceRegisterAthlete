@@ -5,6 +5,7 @@ import static org.mockito.Mockito.*;
 
 import java.util.Optional;
 
+import com.trainday.bodybuilder.domain.model.enums.Role;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -33,6 +34,7 @@ public class LoginUserDetailsServiceTest {
         login.setCpf("999.999.999-99");
         login.setEmail("daniel@email.com");
         login.setPassword("123456");
+        login.setRole(Role.ATHLETE);
 
         when(loginRepository.findByCpf("999.999.999-99"))
                 .thenReturn(Optional.of(login));

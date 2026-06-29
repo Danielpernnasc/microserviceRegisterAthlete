@@ -45,9 +45,10 @@ public class AthleteServiceTest {
     void shouldcreateAhtlete(){
         RegisterRequest registerRequest = new RegisterRequest(
                 "999.999.999-99",
-                LocalDate.of(1980, 01, 01),
+                LocalDate.of(1980, 1, 1),
                 "athlete@host.com",
-                "******"
+                "******",
+                Role.ATHLETE
 
 
         );
@@ -83,9 +84,10 @@ public class AthleteServiceTest {
     void shouldThrowConflictWhenCpfAlreadyExists(){
         RegisterRequest registerReq = new RegisterRequest(
                 "999.999.999-99",
-                LocalDate.of(1980, 01, 01),
+                LocalDate.of(1980, 1, 1),
                 "athlete@host.com",
-                "000000"
+                "000000",
+                Role.ATHLETE
         );
         AthleteRequest request = new AthleteRequest(
 
@@ -130,7 +132,7 @@ public class AthleteServiceTest {
             "Maria Silva",
             null,
             "maria@email.com",
-                      LocalDate.of(2000, 01, 01),
+                      LocalDate.of(2000, 1, 1),
             Gender.FEMALE,
             GenderIdentity.CISGENDER,
             1.68,
@@ -141,7 +143,7 @@ public class AthleteServiceTest {
         when(athleterepository.findByCpf("12345678900"))
             .thenReturn(Optional.of(athlete));
 
-        AthleteResponse state = athleteservice.findbyCpf("12345678900");
+        AthleteResponse state = athleteservice.findMyProfile("12345678900");
 
         assertNotNull(state);
         assertEquals(athlete.getId(), state.id());

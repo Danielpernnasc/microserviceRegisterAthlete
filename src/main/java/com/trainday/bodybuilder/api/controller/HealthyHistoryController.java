@@ -30,35 +30,40 @@ public class HealthyHistoryController {
                .body(createHH);
    }
 
-   @GetMapping("/cpf/{athleteCpf}")
+   @GetMapping("/hh/me")
     public ResponseEntity<HealthyHistory> searchCpf(
-            @PathVariable String athleteCpf
+           Authentication authentication
    ){
+       String athleteCpf = authentication.getName();
        return ResponseEntity.ok(hhservice.findByHHCPF(athleteCpf));
    }
 
-   @PutMapping("/cpf/{athleteCpf}")
+
+    @GetMapping("/internal/cpf/{cpf}")
+    public HealthyHistory findByCpfInternal(@PathVariable String cpf) {
+        return hhservice.findByProfile(cpf);
+    }
+
+
+    @PutMapping("/hh/me")
     public ResponseEntity<HealthyHistory> updateHH(
-            @PathVariable String athleteCpf,
+           Authentication authentication,
             @RequestBody HealthyHistoryUpdatePatchRequest hhrequest
    ){
+       String athleteCpf = authentication.getName();
        return ResponseEntity.ok(
                hhservice.updateHH(athleteCpf, hhrequest)
        );
 
    }
 
-   @PatchMapping("/cpf/{athleteCpf}")
+   @PatchMapping("/hh/me")
     public HealthyHistory patchHH(
-           @PathVariable String athleteCpf,
+           Authentication authentication,
            @RequestBody HealthyHistoryUpdatePatchRequest hhrequest
    ){
+       String athleteCpf = authentication.getName();
        return hhservice.pathHH(athleteCpf, hhrequest);
    }
-
-
-
-
-
 
 }

@@ -38,7 +38,7 @@ public class LoginUserDetailsService implements UserDetailsService {
      return User.builder()
              .username(athlete.getCpf())
              .password(athlete.getPassword())
-             .authorities("USER")
+             .authorities("ROLE_" + athlete.getRole().name())
              .build();
     }
 

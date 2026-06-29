@@ -134,7 +134,7 @@ public class JwtServiceTest {
         String idWait = "usuary-123";
         String userNameWait = "daniel@host.com";
         String token = jwtService.generateToken(idWait, userNameWait, "user1", "athlete1", Role.ATHLETE);
-        String userNameExtracted = jwtService.extractUsername(token);
+        String userNameExtracted = jwtService.extractSubject(token);
         assertEquals(userNameWait, userNameExtracted);
     }
 

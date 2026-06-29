@@ -122,7 +122,7 @@ public class JwtAuthFilterTest {
 
         when(jwtService.isTokenValid("token-valid")).thenReturn(true);
         when(jwtService.extractSubject("token-valid")).thenReturn("user@host.com");
-        when(userDetailsService.loadUserByUsername("user@host.com")).thenReturn(userDetails);
+        when(jwtService.extractRole("token-valid")).thenReturn("ATHLETE");
 
         jwtAuthFilter.doFilterInternal(request, response, filterChain);
 

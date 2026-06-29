@@ -4,6 +4,7 @@ package com.trainday.bodybuilder.application.service;
 import java.util.Optional;
 
 import com.trainday.bodybuilder.domain.model.enums.Role;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import com.mongodb.DuplicateKeyException;
@@ -28,6 +29,7 @@ public class AthleteService {
     public AthleteService(
         AthleteRepository athleterepository,
         LoginRepository loginRepository
+
      
     ){
         this.athleterepository = athleterepository;
@@ -69,7 +71,7 @@ public class AthleteService {
   
     }
 
-    public AthleteResponse findbyCpf(String cpf){
+    public AthleteResponse  findMyProfile(String cpf) {
         Athlete athlete = athleterepository.findByCpf(cpf)
                 .orElseThrow(() -> new RuntimeException(ATHLETE_NOT_FOUND_ID + cpf));
 
@@ -83,7 +85,8 @@ public class AthleteService {
                 athlete.getGender(),
                 athlete.getIdentity(),
                 athlete.getHeight(),
-                athlete.getWeight()
+                athlete.getWeight(),
+                athlete.getRole()
         );
     }
 

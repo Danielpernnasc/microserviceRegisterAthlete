@@ -57,12 +57,14 @@ public class LoginService {
         login.setBorn(registerRequest.born());
         login.setPassword(registerRequest.password());
         login.setPassword(passwordEncoder.encode(registerRequest.password()));
+        login.setRole(registerRequest.role());
          Login saved = loginRepository.save(login);
         return new LoginResponse(
           saved.getId(),
           saved.getEmail(),
                 saved.getCpf(),
-                saved.getBorn()
+                saved.getBorn(),
+                saved.getRole()
         );
 
 

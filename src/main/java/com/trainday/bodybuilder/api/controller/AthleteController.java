@@ -22,8 +22,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 @RestController
@@ -58,11 +56,13 @@ public class AthleteController {
     }
 
 
-    @GetMapping("/cpf/{cpf}")
+    @GetMapping("/athlete/me")
     public ResponseEntity<AthleteResponse> findByCpf(
-        @PathVariable String cpf
+        Authentication authentication
     ){
-        AthleteResponse athlete = service.findbyCpf(cpf);
+
+        String cpf = authentication.getName();
+        AthleteResponse athlete = service.findMyProfile(cpf);
 
         return ResponseEntity.ok(new AthleteResponse(
             athlete.id(),
@@ -74,30 +74,41 @@ public class AthleteController {
             athlete.gender(),
             athlete.identity(),
             athlete.height(),
-            athlete.weight()
+            athlete.weight(),
+                athlete.role()
         ));
     }
 
 
-    @PutMapping("/{id}")
+    @GetMapping("/internal/cpf/{cpf}")
+    public AthleteResponse findByCpfInternal(@PathVariable String cpf) {
+        return service.findMyProfile(cpf);
+    }
+
+
+    @PutMapping("/athlete/me")
     public Athlete updateAthlete(
-        @PathVariable String id,
-        @RequestBody AthleteRequest updateAthlete
+
+        @RequestBody AthleteRequest updateAthlete,
+        Authentication authentication
     ){
-        return service.updateAthlete(id, updateAthlete);
+        String cpf = authentication.getName();
+        return service.updateAthlete(cpf, updateAthlete);
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/athlete/me")
     public Athlete patchAthlete(
-        @PathVariable String id,
-        @RequestBody AthleteRequest patchAthlete
-    ){
-        return service.pathAthlete(id, patchAthlete);
+            @RequestBody AthleteRequest patchAthlete,
+            Authentication authentication
+            ){
+        String cpf = authentication.getName();
+        return service.pathAthlete(cpf, patchAthlete);
     }
 
-    @DeleteMapping("/{id}")
-    public void deleteAhtlete(@PathVariable String id){
-        service.deleteAthlete(id);
+    @DeleteMapping("/athlete/me")
+    public void deleteAhtlete(Authentication authentication){
+        String cpf = authentication.getName();
+        service.deleteAthlete(cpf);
     }
 
 }

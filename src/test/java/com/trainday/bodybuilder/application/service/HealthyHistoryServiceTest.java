@@ -8,6 +8,7 @@ import com.trainday.bodybuilder.domain.model.HealthyHistory;
 import com.trainday.bodybuilder.domain.model.Login;
 import com.trainday.bodybuilder.domain.model.enums.Alcoholic;
 import com.trainday.bodybuilder.domain.model.enums.DiseaseType;
+import com.trainday.bodybuilder.domain.model.enums.Role;
 import com.trainday.bodybuilder.domain.repository.AthleteRepository;
 import com.trainday.bodybuilder.domain.repository.HealtyHistoryRepository;
 import org.junit.jupiter.api.Test;
@@ -42,9 +43,10 @@ public class HealthyHistoryServiceTest {
     void shouldCreateHH(){
         RegisterRequest registerRequest = new RegisterRequest(
                 "999.999.999-99",
-                LocalDate.of(1980, 01, 01),
+                LocalDate.of(1980, 1, 1),
                 "athlete@host.com",
-                "******"
+                "******",
+                Role.ATHLETE
 
 
         );
@@ -91,9 +93,10 @@ public class HealthyHistoryServiceTest {
     void shouldThrowConflictWhenHHAlreadyExist(){
         RegisterRequest registerRequest = new RegisterRequest(
                 "999.999.999-99",
-                LocalDate.of(1980, 01, 01),
+                LocalDate.of(1980, 1, 1),
                 "athlete@host.com",
-                "******"
+                "******",
+                Role.ATHLETE
 
 
         );
@@ -241,6 +244,45 @@ public class HealthyHistoryServiceTest {
         assertEquals(List.of("Dipirona"), state.getWhatAllergies());
         assertEquals(true, state.isSurgeries());
         assertEquals(List.of("Cirugia no joelho esquerdo"), state.getWheresurgeries());
+    }
+
+    @Test
+    void shouldGetHHByCPF(){
+        HealthyHistory hh = new HealthyHistory(
+                "athlete@host.com",
+                "999.999.999-99",
+                false,
+                Alcoholic.DOESNT_DRINK,
+                true,
+                List.of(DiseaseType.HYPERTENSION),
+                List.of("Losartana"),
+                false,
+                null,
+                false,
+                null,
+                "Hipertensão por parte de pai e mãe"
+        );
+
+        when(hhRepository.findByAthleteCpf("999.999.999-99"))
+                .thenReturn(Optional.of(hh));
+
+        HealthyHistory state = hhService.findByProfile("999.999.999-99");
+        assertNotNull(state);
+        assertEquals(hh.getId(), state.getId());
+        assertEquals(hh.getAthleteCpf(), state.getAthleteCpf());
+        assertEquals(hh.getSmoker(), state.getSmoker());
+        assertEquals(hh.getAlcoholic(), state.getAlcoholic());
+        assertEquals(hh.getPhysicallyActive(), state.getPhysicallyActive());
+        assertEquals(hh.getDisease(), state.getDisease());
+        assertEquals(hh.getMedications(), state.getMedications());
+        assertEquals(hh.getDisease(), state.getDisease());
+        assertEquals(hh.getMedications(), state.getMedications());
+        assertEquals(hh.isAllergies(), state.isAllergies());
+        assertEquals(hh.getWhatAllergies(), state.getWhatAllergies());
+        assertEquals(hh.isSurgeries(), state.isSurgeries());
+        assertEquals(hh.getWheresurgeries(), state.getWheresurgeries());
+        assertEquals(hh.getFamilyHistory(), state.getFamilyHistory());
+
     }
 
     @Test
