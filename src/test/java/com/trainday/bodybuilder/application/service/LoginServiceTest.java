@@ -84,7 +84,8 @@ public class LoginServiceTest {
                 "999.999.999-99",
                 LocalDate.of(2000,01,01),
                 "athlete@host.com",
-                "123456"
+                "123456",
+                Role.ATHLETE
         );
 
 
