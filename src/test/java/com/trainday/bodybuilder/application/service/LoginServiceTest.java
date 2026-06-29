@@ -76,6 +76,31 @@ public class LoginServiceTest {
 
     }
 
+    @Test
+    void shouldIfExistsAthlete(){
+        RegisterRequest request = new RegisterRequest(
+
+                "999.999.999-99",
+                LocalDate.of(2000,01,01),
+                "athlete@host.com",
+                "123456"
+        );
+
+
+
+        when(loginrepository.existsByCpf(request.cpf()))
+                .thenReturn(true);
+
+
+        RuntimeException exception = assertThrows(
+                RuntimeException.class,
+                () -> loginservice.createLogin(request)
+        );
+
+        assertEquals("Cpf or Email already registered", exception.getMessage());
+
+    }
+
   @Test
     void shoudauthenticate() {
 
