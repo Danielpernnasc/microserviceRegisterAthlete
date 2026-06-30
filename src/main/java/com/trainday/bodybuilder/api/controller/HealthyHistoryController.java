@@ -15,28 +15,28 @@ public class HealthyHistoryController {
 
     private final HealthyHistoryService hhservice;
 
-   public HealthyHistoryController(HealthyHistoryService hhservice){
-       this.hhservice = hhservice;
-   }
+    public HealthyHistoryController(HealthyHistoryService hhservice){
+        this.hhservice = hhservice;
+    }
 
-   @PostMapping
+    @PostMapping
     public ResponseEntity<HealthyHistory> save(
-           @RequestBody HealthyHistoryRequest request,
-           Authentication authentication
-           ){
-       String athleteId = authentication.getName();
-       HealthyHistory createHH = hhservice.createPacient(request, athleteId);
-       return ResponseEntity.status(HttpStatus.CREATED)
-               .body(createHH);
-   }
+            @RequestBody HealthyHistoryRequest request,
+            Authentication authentication
+    ){
+        String athleteId = authentication.getName();
+        HealthyHistory createHH = hhservice.createPacient(request, athleteId);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(createHH);
+    }
 
-   @GetMapping("/hh/me")
+    @GetMapping("/hh/me")
     public ResponseEntity<HealthyHistory> searchCpf(
-           Authentication authentication
-   ){
-       String athleteCpf = authentication.getName();
-       return ResponseEntity.ok(hhservice.findByHHCPF(athleteCpf));
-   }
+            Authentication authentication
+    ){
+        String athleteCpf = authentication.getName();
+        return ResponseEntity.ok(hhservice.findByHHCPF(athleteCpf));
+    }
 
 
     @GetMapping("/internal/cpf/{cpf}")
@@ -47,23 +47,23 @@ public class HealthyHistoryController {
 
     @PutMapping("/hh/me")
     public ResponseEntity<HealthyHistory> updateHH(
-           Authentication authentication,
+            Authentication authentication,
             @RequestBody HealthyHistoryUpdatePatchRequest hhrequest
-   ){
-       String athleteCpf = authentication.getName();
-       return ResponseEntity.ok(
-               hhservice.updateHH(athleteCpf, hhrequest)
-       );
+    ){
+        String athleteCpf = authentication.getName();
+        return ResponseEntity.ok(
+                hhservice.updateHH(athleteCpf, hhrequest)
+        );
 
-   }
+    }
 
-   @PatchMapping("/hh/me")
+    @PatchMapping("/hh/me")
     public HealthyHistory patchHH(
-           Authentication authentication,
-           @RequestBody HealthyHistoryUpdatePatchRequest hhrequest
-   ){
-       String athleteCpf = authentication.getName();
-       return hhservice.pathHH(athleteCpf, hhrequest);
-   }
+            Authentication authentication,
+            @RequestBody HealthyHistoryUpdatePatchRequest hhrequest
+    ){
+        String athleteCpf = authentication.getName();
+        return hhservice.pathHH(athleteCpf, hhrequest);
+    }
 
 }

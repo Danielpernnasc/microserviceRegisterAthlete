@@ -18,7 +18,7 @@ import java.util.Optional;
 @Service
 public class HealthyHistoryService {
     private static final String ATHLETE_NOT_FOUND = "Athlete not found!";
-    private static final String HEALTY_HISTORY_NOT_FOUND = "Healthy History not found";
+    private static final String HEALTY_NOT_HISTORY = "Healthy History not found";
     private static final String STRING = "String";
     private static final String ALLERGIE_INFORMED = "Allergie(s) not informed, Request it to be informed!";
     private static final String SUGERIO_INFORMED = "Surgery(ies) not informed, Request it to be informed!";
@@ -75,13 +75,12 @@ public class HealthyHistoryService {
     public HealthyHistory findByHHCPF(String athleteCpf) {
         return hhrepository.findByAthleteCpf(athleteCpf)
                 .orElseThrow(() ->
-                        new RuntimeException(HEALTY_HISTORY_NOT_FOUND));
-
+                        new RuntimeException(HEALTY_NOT_HISTORY));
     }
 
     public HealthyHistory findByProfile(String cpf){
         HealthyHistory hh = hhrepository.findByAthleteCpf(cpf)
-                .orElseThrow(() -> new RuntimeException(HEALTY_HISTORY_NOT_FOUND));
+                .orElseThrow(() -> new RuntimeException(HEALTY_NOT_HISTORY));
         return new HealthyHistory(
                 hh.getId(),
                 hh.getAthleteCpf(),
@@ -100,7 +99,7 @@ public class HealthyHistoryService {
 
     public HealthyHistory updateHH(String athleteCpf, HealthyHistoryUpdatePatchRequest updateHH)  {
         HealthyHistory existHH = hhrepository.findByAthleteCpf(athleteCpf)
-                .orElseThrow(() -> new RuntimeException(HEALTY_HISTORY_NOT_FOUND));
+                .orElseThrow(() -> new RuntimeException(HEALTY_NOT_HISTORY));
 
         Optional.ofNullable(updateHH.smoker())
                 .ifPresent(existHH::setSmoker);
@@ -143,7 +142,7 @@ public class HealthyHistoryService {
 
     public HealthyHistory pathHH(String athleteCpf, HealthyHistoryUpdatePatchRequest req){
         HealthyHistory hh = hhrepository.findByAthleteCpf(athleteCpf)
-                .orElseThrow(() -> new RuntimeException(HEALTY_HISTORY_NOT_FOUND));
+                .orElseThrow(() -> new RuntimeException(HEALTY_NOT_HISTORY));
 
         if(req.smoker() != null){
             hh.setSmoker(req.smoker());

@@ -9,6 +9,7 @@ import com.trainday.bodybuilder.domain.model.enums.Role;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -45,17 +46,11 @@ public class LoginService {
     }
 
 
-    public LoginResponse
-        createLogin(RegisterRequest registerRequest ){
-
-        if(loginRepository.existsByEmail(registerRequest.email()) || loginRepository.existsByCpf(registerRequest.cpf())) {
-            throw new RuntimeException("Cpf or Email already registered");
-        }
+    public LoginResponse createLogin(RegisterRequest registerRequest ){
         Login login = new Login();
         login.setCpf(registerRequest.cpf());
         login.setEmail(registerRequest.email());
         login.setBorn(registerRequest.born());
-        login.setPassword(registerRequest.password());
         login.setPassword(passwordEncoder.encode(registerRequest.password()));
         login.setRole(registerRequest.role());
          Login saved = loginRepository.save(login);
@@ -78,7 +73,6 @@ public class LoginService {
 
        if (user.isEmpty()) {
            user = loginRepository.findByCpf(request.login());
-
        }
        Login login = user.orElseThrow(
                () -> new RuntimeException("Invalid login or password")

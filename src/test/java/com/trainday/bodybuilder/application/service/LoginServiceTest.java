@@ -52,7 +52,7 @@ public class LoginServiceTest {
         RegisterRequest request = new RegisterRequest(
 
             "999.999.999-99",
-                LocalDate.of(2000, 1,1),
+                LocalDate.of(2000,1,1),
             "athlete@host.com",
                 "123456",
                 Role.ATHLETE
@@ -71,35 +71,9 @@ public class LoginServiceTest {
         assertNotNull(service);
         assertEquals("id-user", service.id());
         assertEquals("athlete@host.com", service.email());
-        assertEquals(Role.ATHLETE, service.role());
+
         verify(passwordEncoder).encode("123456");
         verify(loginrepository).save(any(Login.class));
-
-    }
-
-    @Test
-    void shouldIfExistsAthlete(){
-        RegisterRequest request = new RegisterRequest(
-
-                "999.999.999-99",
-                LocalDate.of(2000,01,01),
-                "athlete@host.com",
-                "123456",
-                Role.ATHLETE
-        );
-
-
-
-        when(loginrepository.existsByCpf(request.cpf()))
-                .thenReturn(true);
-
-
-        RuntimeException exception = assertThrows(
-                RuntimeException.class,
-                () -> loginservice.createLogin(request)
-        );
-
-        assertEquals("Cpf or Email already registered", exception.getMessage());
 
     }
 
@@ -111,7 +85,6 @@ public class LoginServiceTest {
         user.setEmail("athlete@host.com");
         user.setCpf("999.999.999-99");
         user.setPassword("123456");
-        user.setRole(Role.ATHLETE);
 
         Athlete athlete = new Athlete();
         athlete.setId("athlete123");

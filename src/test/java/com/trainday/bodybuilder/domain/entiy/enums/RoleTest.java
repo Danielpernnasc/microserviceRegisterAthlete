@@ -37,5 +37,4 @@ public class RoleTest {
         String result = Role.ATHLETE.getState();
         assertEquals("ATLETA", result);
     }
-
 }

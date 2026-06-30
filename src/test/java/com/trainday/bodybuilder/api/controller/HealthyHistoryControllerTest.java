@@ -36,7 +36,7 @@ public class HealthyHistoryControllerTest {
     @Test
     void shoudSaveHH(){
         HealthyHistoryRequest hhrequest = new HealthyHistoryRequest(
-              false,
+                false,
                 Alcoholic.DOESNT_DRINK,
                 true,
                 List.of(DiseaseType.HYPERTENSION),
